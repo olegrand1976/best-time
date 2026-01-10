@@ -1,0 +1,6 @@
+Project Stack: Laravel 11 (API), Nuxt 3 (SSR), PostgreSQL, Redis, Docker.
+Always use strict types in PHP and TypeScript.
+Use Laravel Pint for PHP formatting.
+Use ESLint/Prettier for JS/Vue formatting.
+Prefer Composition API and <script setup> in Vue.
+In Laravel, always use FormRequests for validation and API Resources for transformation.

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# Laravel
+/backend/storage/*.key
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitignore
+
+# Nuxt
+/frontend/.nuxt
+/frontend/.output
+/frontend/dist
+
+# Build
+dist/
+build/

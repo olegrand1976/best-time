@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: best-time-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: besttime
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "9544:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - best-time-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Queue
+  redis:
+    image: redis:7-alpine
+    container_name: best-time-redis
+    restart: unless-stopped
+    ports:
+      - "9631:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - best-time-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PHP-FPM pour Laravel
+  php-fpm:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: best-time-php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    networks:
+      - best-time-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailhog:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=besttime
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USERNAME=null
+      - MAIL_PASSWORD=null
+      - MAIL_ENCRYPTION=null
+      - MAIL_FROM_ADDRESS=noreply@besttime.test
+      - MAIL_FROM_NAME="${APP_NAME}"
+
+  # Nginx pour l'API Laravel
+  nginx:
+    image: nginx:alpine
+    container_name: best-time-nginx
+    restart: unless-stopped
+    ports:
+      - "9081:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - best-time-network
+    depends_on:
+      - php-fpm
+
+  # Node.js pour Nuxt 3
+  node:
+    image: node:20-alpine
+    container_name: best-time-node
+    restart: unless-stopped
+    working_dir: /var/www/frontend
+    volumes:
+      - ./frontend:/var/www/frontend
+    ports:
+      - "9102:3000"
+    networks:
+      - best-time-network
+    environment:
+      - NODE_ENV=development
+      - NUXT_API_URL=http://localhost/api
+      - NUXT_PUBLIC_API_URL=http://localhost/api
+    command: sh -c "if [ ! -d node_modules ]; then npm install; fi && npm run dev"
+    depends_on:
+      - nginx
+
+  # MailHog pour l'envoi d'emails en développement
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: best-time-mailhog
+    restart: unless-stopped
+    ports:
+      - "9025:8025"  # Interface web MailHog
+      - "1125:1025"  # Port SMTP (1125 externe, 1025 interne)
+    networks:
+      - best-time-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  best-time-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

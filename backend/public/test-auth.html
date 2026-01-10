@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentification - Best Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #666;
+            margin-top: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.secondary {
+            background: #2196F3;
+        }
+        button.secondary:hover {
+            background: #0b7dda;
+        }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover {
+            background: #da190b;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .active-entry {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+        .user-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="/logo.svg" alt="Best Time" style="height: 60px; margin-bottom: 10px;" />
+        </div>
+        <h1>🔐 Test Authentification</h1>
+        
+        <div class="form-group">
+            <label for="email">Email :</label>
+            <input type="email" id="email" value="admin@besttime.test" placeholder="admin@besttime.test">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" value="password" placeholder="password">
+        </div>
+        
+        <button onclick="login()">Se connecter</button>
+        <button class="secondary" onclick="testDashboard()" id="btnDashboard" disabled>Voir Dashboard</button>
+        <button class="secondary" onclick="testMe()" id="btnMe" disabled>Mon Profil</button>
+        <button class="secondary" onclick="testTimeEntries()" id="btnEntries" disabled>Time Entries</button>
+        <button class="danger" onclick="logout()" id="btnLogout" disabled>Déconnexion</button>
+        
+        <div id="result"></div>
+    </div>
+    
+    <div class="container" id="dashboardContainer" style="display: none;">
+        <h2>📊 Dashboard Admin</h2>
+        <div id="dashboardContent"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:9081/api';
+        let authToken = null;
+
+        function showResult(data, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + (isError ? 'error' : 'success');
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function showInfo(data) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    showResult({
+                        success: true,
+                        message: 'Connexion réussie !',
+                        user: data.user
+                    });
+                    
+                    // Afficher les boutons
+                    document.getElementById('btnDashboard').disabled = false;
+                    document.getElementById('btnMe').disabled = false;
+                    document.getElementById('btnEntries').disabled = false;
+                    document.getElementById('btnLogout').disabled = false;
+                    
+                    // Afficher les infos utilisateur
+                    displayUserInfo(data.user);
+                } else {
+                    showResult(data, true);
+                }
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        function displayUserInfo(user) {
+            const userInfo = document.createElement('div');
+            userInfo.className = 'user-info';
+            userInfo.innerHTML = `
+                <h3>👤 Utilisateur connecté</h3>
+                <p><strong>Nom:</strong> ${user.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Rôle:</strong> <span style="color: ${user.role === 'admin' ? '#4CAF50' : '#2196F3'}; font-weight: bold;">${user.role.toUpperCase()}</span></p>
+            `;
+            document.querySelector('.container').insertBefore(userInfo, document.querySelector('.form-group'));
+        }
+
+        async function testDashboard() {
+            if (!authToken) {
+                showResult({ error: 'Vous devez vous connecter d\'abord' }, true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showInfo({ dashboard: data });
+                    displayDashboard(data);
+                } else {
+                    showResult(data, true);
+                }
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        function displayDashboard(data) {
+            const container = document.getElementById('dashboardContainer');
+            const content = document.getElementById('dashboardContent');
+            
+            container.style.display = 'block';
+            
+            let html = '<div class="dashboard-stats">';
+            
+            if (data.total_employees !== undefined) {
+                // Vue Admin
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.today_hours || 0}h</div>
+                        <div class="stat-label">Heures aujourd'hui</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.week_hours || 0}h</div>
+                        <div class="stat-label">Heures cette semaine</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.total_employees || 0}</div>
+                        <div class="stat-label">Total employés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.active_entries?.length || 0}</div>
+                        <div class="stat-label">Pointages actifs</div>
+                    </div>
+                `;
+            } else {
+                // Vue Employé
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.today_hours || 0}h</div>
+                        <div class="stat-label">Aujourd'hui</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.week_hours || 0}h</div>
+                        <div class="stat-label">Cette semaine</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            if (data.active_entries && data.active_entries.length > 0) {
+                html += '<h3>Pointages actifs</h3>';
+                data.active_entries.forEach(entry => {
+                    const startTime = new Date(entry.start_time);
+                    const duration = Math.floor((Date.now() - startTime) / 1000);
+                    const hours = Math.floor(duration / 3600);
+                    const minutes = Math.floor((duration % 3600) / 60);
+                    
+                    html += `
+                        <div class="active-entry">
+                            <p><strong>${entry.user.name}</strong> - ${entry.project?.name || 'Aucun projet'}</p>
+                            <p>Commencé: ${startTime.toLocaleString('fr-FR')}</p>
+                            <p>Durée: ${hours}h ${minutes}min</p>
+                            ${entry.description ? `<p>Description: ${entry.description}</p>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            if (data.active_entry) {
+                html += '<h3>Mon pointage actif</h3>';
+                const startTime = new Date(data.active_entry.start_time);
+                html += `
+                    <div class="active-entry">
+                        <p><strong>Projet:</strong> ${data.active_entry.project?.name || 'Aucun projet'}</p>
+                        <p><strong>Commencé:</strong> ${startTime.toLocaleString('fr-FR')}</p>
+                        ${data.active_entry.description ? `<p><strong>Description:</strong> ${data.active_entry.description}</p>` : ''}
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = html;
+        }
+
+        async function testMe() {
+            if (!authToken) {
+                showResult({ error: 'Vous devez vous connecter d\'abord' }, true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult({ profile: data.user });
+                } else {
+                    showResult(data, true);
+                }
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function testTimeEntries() {
+            if (!authToken) {
+                showResult({ error: 'Vous devez vous connecter d\'abord' }, true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/time-entries?week=true`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showInfo({ timeEntries: data });
+                } else {
+                    showResult(data, true);
+                }
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function logout() {
+            if (!authToken) {
+                showResult({ error: 'Vous n\'êtes pas connecté' }, true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                authToken = null;
+                showResult({ message: 'Déconnexion réussie' });
+                
+                // Désactiver les boutons
+                document.getElementById('btnDashboard').disabled = true;
+                document.getElementById('btnMe').disabled = true;
+                document.getElementById('btnEntries').disabled = true;
+                document.getElementById('btnLogout').disabled = true;
+                
+                // Masquer le dashboard
+                document.getElementById('dashboardContainer').style.display = 'none';
+                
+                // Supprimer les infos utilisateur
+                const userInfo = document.querySelector('.user-info');
+                if (userInfo) userInfo.remove();
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        // Auto-login au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => login(), 1000);
+        });
+    </script>
+</body>
+</html>

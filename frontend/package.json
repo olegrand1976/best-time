@@ -1,0 +1,25 @@
+{
+  "name": "best-time-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^2.15.4",
+    "@pinia/nuxt": "^0.5.1",
+    "nuxt": "^4.0.0",
+    "pinia": "^2.1.7"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-module": "^4.1.0",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.4"
+  }
+}
