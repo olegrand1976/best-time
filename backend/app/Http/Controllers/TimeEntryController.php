@@ -8,6 +8,7 @@ use App\Http\Requests\TimeEntry\StoreTimeEntryRequest;
 use App\Http\Requests\TimeEntry\UpdateTimeEntryRequest;
 use App\Http\Resources\TimeEntryResource;
 use App\Models\TimeEntry;
+use App\Services\ActivityLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -59,6 +60,9 @@ class TimeEntryController extends Controller
 
         $timeEntry->load(['user', 'project']);
 
+        // Log the creation
+        ActivityLogService::logCreated($timeEntry, $request);
+
         return response()->json(new TimeEntryResource($timeEntry), 201);
     }
 
@@ -91,8 +95,12 @@ class TimeEntryController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $oldAttributes = $timeEntry->getAttributes();
         $timeEntry->update($request->validated());
         $timeEntry->load(['user', 'project']);
+
+        // Log the update
+        ActivityLogService::logUpdated($timeEntry, $oldAttributes, $request);
 
         return response()->json(new TimeEntryResource($timeEntry));
     }
@@ -108,6 +116,9 @@ class TimeEntryController extends Controller
         if ($user->isEmployee() && $timeEntry->user_id !== $user->id) {
             abort(403, 'Unauthorized');
         }
+
+        // Log the deletion before deleting
+        ActivityLogService::logDeleted($timeEntry, $request);
 
         $timeEntry->delete();
 
@@ -142,6 +153,9 @@ class TimeEntryController extends Controller
 
         $timeEntry->load(['user', 'project']);
 
+        // Log the clock in
+        ActivityLogService::log('clock_in', $timeEntry, null, null, "User clocked in: {$timeEntry->description}", $request);
+
         return response()->json(new TimeEntryResource($timeEntry), 201);
     }
 
@@ -167,6 +181,9 @@ class TimeEntryController extends Controller
         ]);
 
         $timeEntry->load(['user', 'project']);
+
+        // Log the clock out
+        ActivityLogService::log('clock_out', $timeEntry, null, null, "User clocked out: Duration {$timeEntry->duration_formatted}", $request);
 
         return response()->json(new TimeEntryResource($timeEntry));
     }

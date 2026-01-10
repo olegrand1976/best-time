@@ -105,8 +105,8 @@ services:
       - best-time-network
     environment:
       - NODE_ENV=development
-      - NUXT_API_URL=http://localhost/api
-      - NUXT_PUBLIC_API_URL=http://localhost/api
+      - NUXT_API_URL=http://localhost:9081/api
+      - NUXT_PUBLIC_API_URL=http://localhost:9081/api
     command: sh -c "if [ ! -d node_modules ]; then npm install; fi && npm run dev"
     depends_on:
       - nginx

@@ -1,35 +1,35 @@
 <template>
   <div class="space-y-4">
-    <h3 class="text-lg font-semibold">Ajouter une entrée de temps</h3>
+    <h3 class="text-lg font-semibold">{{ $t('timeEntries.form.title') }}</h3>
 
-    <UFormGroup label="Date" name="date" required>
+    <UFormGroup :label="$t('timeEntries.form.date')" name="date" required>
       <UInput v-model="date" type="date" required />
     </UFormGroup>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <UFormGroup label="Heure de début" name="start_time" required>
+      <UFormGroup :label="$t('timeEntries.form.startTime')" name="start_time" required>
         <UInput v-model="startTime" type="time" required />
       </UFormGroup>
 
-      <UFormGroup label="Heure de fin" name="end_time" required>
+      <UFormGroup :label="$t('timeEntries.form.endTime')" name="end_time" required>
         <UInput v-model="endTime" type="time" required />
       </UFormGroup>
     </div>
 
-    <UFormGroup label="Projet (optionnel)" name="project">
+    <UFormGroup :label="$t('timeEntries.form.project') + ' (' + $t('common.optional') + ')'" name="project">
       <USelect
         v-model="selectedProject"
         :options="projectOptions"
         option-attribute="label"
         value-attribute="value"
-        placeholder="Sélectionner un projet"
+        :placeholder="$t('timeEntries.form.projectPlaceholder')"
       />
     </UFormGroup>
 
-    <UFormGroup label="Description" name="description">
+    <UFormGroup :label="$t('timeEntries.form.description')" name="description">
       <UTextarea
         v-model="description"
-        placeholder="Description du travail effectué..."
+        :placeholder="$t('timeEntries.form.descriptionPlaceholder')"
         rows="4"
       />
     </UFormGroup>
@@ -38,10 +38,10 @@
 
     <div class="flex justify-end space-x-3">
       <UButton color="gray" variant="ghost" @click="$emit('cancel')">
-        Annuler
+        {{ $t('common.cancel') }}
       </UButton>
       <UButton @click="handleSubmit" :loading="loading">
-        Enregistrer
+        {{ $t('common.save') }}
       </UButton>
     </div>
   </div>
@@ -65,9 +65,11 @@ const description = ref('')
 
 const projects = computed(() => timeEntryStore.projects)
 
+const { t } = useI18n()
+
 const projectOptions = computed(() => {
   return [
-    { label: 'Aucun projet', value: null },
+    { label: t('timeEntries.form.noProject'), value: null },
     ...projects.value.map((p: any) => ({ label: p.name, value: p.id })),
   ]
 })
@@ -76,7 +78,7 @@ const handleSubmit = async () => {
   error.value = ''
   
   if (!date.value || !startTime.value || !endTime.value) {
-    error.value = 'Veuillez remplir tous les champs requis'
+    error.value = t('timeEntries.form.requiredFieldsError')
     return
   }
 
@@ -84,7 +86,7 @@ const handleSubmit = async () => {
   const endDateTime = new Date(`${date.value}T${endTime.value}`)
 
   if (endDateTime <= startDateTime) {
-    error.value = 'L\'heure de fin doit être postérieure à l\'heure de début'
+    error.value = t('timeEntries.form.invalidTimeRange')
     return
   }
 
@@ -100,7 +102,7 @@ const handleSubmit = async () => {
 
     emit('created')
   } catch (err: any) {
-    error.value = err.data?.message || 'Erreur lors de la création de l\'entrée'
+    error.value = err.data?.message || t('timeEntries.form.createError')
   } finally {
     loading.value = false
   }

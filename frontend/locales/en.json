@@ -1,0 +1,235 @@
+{
+  "appName": "Best Time",
+  "common": {
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "login": "Login",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "optional",
+    "refresh": "Refresh",
+    "view": "View",
+    "actions": "Actions"
+  },
+  "auth": {
+    "title": "Login",
+    "subtitle": "Sign in to your account to continue",
+    "email": "Email address",
+    "password": "Password",
+    "emailPlaceholder": "your[at]email.com",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Sign in",
+    "loggingIn": "Logging in...",
+    "loginError": "Login error. Please check your credentials.",
+    "logoutSuccess": "Successfully logged out",
+    "demoAccounts": "Demo accounts available",
+    "admin": "Admin",
+    "employee": "Employee"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "timeEntries": "My time entries",
+    "projects": "Projects",
+    "settings": "Settings",
+    "profile": "My profile"
+  },
+  "login": {
+    "tagline": "Your professional time tracking solution",
+    "mobileTagline": "Your time tracking solution",
+    "regulation": {
+      "title": "European regulatory compliance",
+      "description": "As of January 1, 2027, European regulations (Directive 2003/88/EC and CJEU ruling of May 14, 2019) require all employers to implement an objective, reliable and accessible system to record daily working time for each employee.",
+      "compliance": "✅ Best Time fully meets this legal obligation with timestamped, traceable and verifiable recording of all hours worked."
+    },
+    "features": {
+      "realtime": {
+        "title": "Real-time tracking",
+        "description": "Automatically record your working time with a single click. Instant and accurate time tracking for perfect traceability."
+      },
+      "reports": {
+        "title": "Detailed reports",
+        "description": "View your hours by project, week or month. Intuitive dashboards with charts for quick and efficient analysis."
+      },
+      "team": {
+        "title": "Team management",
+        "description": "Administrators can track the time of the entire team, manage projects, assign tasks and generate consolidated reports with one click."
+      },
+      "security": {
+        "title": "Secure and reliable",
+        "description": "Your data is protected with the latest security technologies. Token-authenticated access, automatic backup and GDPR compliance."
+      }
+    },
+    "footer": "© 2024 Best Time. All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "title": "Time management solution compliant with European regulations",
+      "subtitle": "Record, track and manage your team's working time with ease. Compliant with European directive from 2027.",
+      "cta": "Get started"
+    },
+    "features": {
+      "title": "Everything you need",
+      "subtitle": "A complete platform to efficiently manage working time"
+    },
+    "footer": {
+      "links": "Quick links",
+      "legal": "Legal"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "admin": {
+      "title": "Admin Dashboard",
+      "todayHours": "Today's hours",
+      "weekHours": "This week's hours",
+      "totalEmployees": "Total employees",
+      "activeEntries": "Active entries",
+      "activeEntriesTitle": "Active entries"
+    },
+    "employee": {
+      "clocking": "Time tracking",
+      "statistics": "Statistics",
+      "today": "Today",
+      "thisWeek": "This week",
+      "activeEntry": "Active entry"
+    }
+  },
+  "timeEntries": {
+    "title": "My time entries",
+    "addEntry": "Add entry",
+    "noEntries": "No time entries found",
+    "form": {
+      "title": "Add time entry",
+      "date": "Date",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "project": "Project",
+      "projectPlaceholder": "Select a project",
+      "noProject": "No project",
+      "description": "Description",
+      "descriptionPlaceholder": "Description of work performed...",
+      "requiredFieldsError": "Please fill in all required fields",
+      "invalidTimeRange": "End time must be after start time",
+      "createError": "Error creating entry"
+    },
+    "card": {
+      "inProgress": "In progress",
+      "started": "Started",
+      "duration": "Duration",
+      "active": "Active"
+    },
+    "noActiveEntries": "No active entries",
+    "clocking": {
+      "activeSince": "Active since:",
+      "stop": "Stop tracking",
+      "start": "Start tracking",
+      "project": "Project",
+      "projectPlaceholder": "Select a project",
+      "description": "Description",
+      "descriptionPlaceholder": "Description of work..."
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Email address is not valid",
+    "min": "This field must contain at least {min} characters",
+    "max": "This field cannot exceed {max} characters"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Server connection error",
+    "unauthorized": "Unauthorized",
+    "notFound": "Resource not found",
+    "serverError": "Server error"
+  },
+  "success": {
+    "created": "Successfully created",
+    "updated": "Successfully updated",
+    "deleted": "Successfully deleted"
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "projects": "Projects",
+      "statistics": "Statistics",
+      "settings": "Settings",
+      "logs": "Logs",
+      "activityLogs": "Activity Logs",
+      "technicalLogs": "Technical Logs"
+    },
+    "dashboard": {
+      "title": "Administration",
+      "subtitle": "Manage your team and projects"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Create and manage user accounts",
+      "createButton": "Create user",
+      "createTitle": "Create user",
+      "editTitle": "Edit user",
+      "searchPlaceholder": "Search by name or email...",
+      "filterByRole": "Filter by role",
+      "allRoles": "All roles",
+      "noUsers": "No users found",
+      "name": "Name",
+      "role": "Role",
+      "createdAt": "Created at",
+      "passwordHint": "Leave empty to keep current password",
+      "deleteConfirm": "Confirm deletion",
+      "deleteMessage": "Are you sure you want to delete user {name}?"
+    },
+    "logs": {
+      "technical": {
+        "title": "Technical Logs",
+        "subtitle": "View Laravel application logs",
+        "linesPlaceholder": "Number of lines",
+        "filterByLevel": "Filter by level",
+        "allLevels": "All levels",
+        "noLogs": "No logs found"
+      },
+      "activity": {
+        "title": "Activity Logs",
+        "subtitle": "Trace of all user actions",
+        "searchPlaceholder": "Search in logs...",
+        "filterByAction": "Filter by action",
+        "allActions": "All actions",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "noLogs": "No activity logs found",
+        "system": "System",
+        "user": "User",
+        "action": "Action",
+        "model": "Model",
+        "details": "Details",
+        "timestamp": "Date",
+        "created": "Created",
+        "updated": "Updated",
+        "deleted": "Deleted",
+        "login": "Login",
+        "logout": "Logout",
+        "clockIn": "Clock in",
+        "clockOut": "Clock out"
+      }
+    },
+    "common": {
+      "view": "View",
+      "actions": "Actions",
+      "refresh": "Refresh"
+    }
+  }
+}

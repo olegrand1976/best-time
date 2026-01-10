@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="mb-6 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-900">Mes temps</h1>
+      <h1 class="text-2xl font-bold text-gray-900">{{ $t('timeEntries.title') }}</h1>
       <UButton @click="showForm = !showForm" color="primary">
-        Ajouter une entrée
+        {{ $t('timeEntries.addEntry') }}
       </UButton>
     </div>
 

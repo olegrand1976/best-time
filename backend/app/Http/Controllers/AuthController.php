@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\UserResource;
+use App\Services\ActivityLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,9 @@ class AuthController extends Controller
 
         $user = $request->user();
         $token = $user->createToken('auth-token')->plainTextToken;
+
+        // Log the login
+        ActivityLogService::logLogin($user, $request);
 
         return response()->json([
             'user' => new UserResource($user),
@@ -43,7 +47,12 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+        
+        // Log the logout before deleting the token
+        ActivityLogService::logLogout($user, $request);
+
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Successfully logged out',

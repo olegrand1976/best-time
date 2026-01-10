@@ -6,7 +6,7 @@
           <span class="font-semibold text-gray-900">
             {{ formatDate(entry.start_time) }}
           </span>
-          <UBadge v-if="entry.is_active" color="green">En cours</UBadge>
+          <UBadge v-if="entry.is_active" color="green">{{ $t('timeEntries.card.inProgress') }}</UBadge>
         </div>
 
         <div class="space-y-1 text-sm text-gray-600">
@@ -46,9 +46,11 @@ defineEmits<{
   deleted: []
 }>()
 
+const { locale } = useI18n()
+
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
-  return date.toLocaleDateString('fr-FR', {
+  return date.toLocaleDateString(locale.value, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -58,7 +60,7 @@ const formatDate = (dateString: string): string => {
 
 const formatTime = (dateString: string): string => {
   const date = new Date(dateString)
-  return date.toLocaleTimeString('fr-FR', {
+  return date.toLocaleTimeString(locale.value, {
     hour: '2-digit',
     minute: '2-digit',
   })

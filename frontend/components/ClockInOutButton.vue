@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <div v-if="activeEntry" class="space-y-2">
-      <p class="text-sm text-gray-600">Pointage en cours depuis :</p>
+      <p class="text-sm text-gray-600">{{ $t('timeEntries.clocking.activeSince') }}</p>
       <p class="text-xl font-bold">{{ formatDuration(activeDuration) }}</p>
       <UButton
         @click="handleStop"
@@ -10,25 +10,25 @@
         block
         :loading="loading"
       >
-        Arrêter le pointage
+        {{ $t('timeEntries.clocking.stop') }}
       </UButton>
     </div>
 
     <div v-else class="space-y-4">
-      <UFormGroup label="Projet (optionnel)" name="project">
+      <UFormGroup :label="$t('timeEntries.clocking.project') + ' (' + $t('common.optional') + ')'" name="project">
         <USelect
           v-model="selectedProject"
           :options="projectOptions"
           option-attribute="label"
           value-attribute="value"
-          placeholder="Sélectionner un projet"
+          :placeholder="$t('timeEntries.clocking.projectPlaceholder')"
         />
       </UFormGroup>
 
-      <UFormGroup label="Description (optionnelle)" name="description">
+      <UFormGroup :label="$t('timeEntries.clocking.description') + ' (' + $t('common.optional') + ')'" name="description">
         <UTextarea
           v-model="description"
-          placeholder="Description du travail..."
+          :placeholder="$t('timeEntries.clocking.descriptionPlaceholder')"
           rows="3"
         />
       </UFormGroup>
@@ -40,7 +40,7 @@
         block
         :loading="loading"
       >
-        Démarrer le pointage
+        {{ $t('timeEntries.clocking.start') }}
       </UButton>
     </div>
   </div>
@@ -58,9 +58,11 @@ let interval: NodeJS.Timeout | null = null
 
 const projects = computed(() => timeEntryStore.projects)
 
+const { t } = useI18n()
+
 const projectOptions = computed(() => {
   return [
-    { label: 'Aucun projet', value: null },
+    { label: t('timeEntries.form.noProject'), value: null },
     ...projects.value.map((p: any) => ({ label: p.name, value: p.id })),
   ]
 })

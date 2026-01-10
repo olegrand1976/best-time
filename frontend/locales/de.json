@@ -1,0 +1,160 @@
+{
+  "common": {
+    "welcome": "Willkommen",
+    "logout": "Abmelden",
+    "login": "Anmelden",
+    "loading": "Wird geladen...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "submit": "Absenden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "reset": "Zurücksetzen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "optional": "optional"
+  },
+  "auth": {
+    "title": "Anmeldung",
+    "subtitle": "Melden Sie sich bei Ihrem Konto an, um fortzufahren",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "emailPlaceholder": "ihre[at]email.de",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Anmelden",
+    "loggingIn": "Wird angemeldet...",
+    "loginError": "Anmeldefehler. Bitte überprüfen Sie Ihre Anmeldedaten.",
+    "logoutSuccess": "Erfolgreich abgemeldet",
+    "demoAccounts": "Demo-Konten verfügbar",
+    "admin": "Admin",
+    "employee": "Mitarbeiter"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "timeEntries": "Meine Zeiterfassungen",
+    "projects": "Projekte",
+    "settings": "Einstellungen",
+    "profile": "Mein Profil"
+  },
+  "login": {
+    "tagline": "Ihre professionelle Zeiterfassungslösung",
+    "mobileTagline": "Ihre Zeiterfassungslösung",
+    "regulation": {
+      "title": "Einhaltung europäischer Vorschriften",
+      "description": "Ab dem 1. Januar 2027 verlangen die europäischen Vorschriften (Richtlinie 2003/88/EG und EuGH-Urteil vom 14. Mai 2019) von allen Arbeitgebern die Einführung eines objektiven, zuverlässigen und zugänglichen Systems zur täglichen Aufzeichnung der Arbeitszeit jedes Arbeitnehmers.",
+      "compliance": "✅ Best Time erfüllt diese gesetzliche Verpflichtung vollständig mit einer zeitgestempelten, nachvollziehbaren und überprüfbaren Aufzeichnung aller geleisteten Stunden."
+    },
+    "features": {
+      "realtime": {
+        "title": "Echtzeit-Erfassung",
+        "description": "Erfassen Sie Ihre Arbeitszeit automatisch mit einem Klick. Sofortige und präzise Zeiterfassung für perfekte Nachverfolgbarkeit."
+      },
+      "reports": {
+        "title": "Detaillierte Berichte",
+        "description": "Zeigen Sie Ihre Stunden nach Projekt, Woche oder Monat an. Intuitive Dashboards mit Diagrammen für schnelle und effiziente Analyse."
+      },
+      "team": {
+        "title": "Teamverwaltung",
+        "description": "Administratoren können die Zeit des gesamten Teams verfolgen, Projekte verwalten, Aufgaben zuweisen und konsolidierte Berichte mit einem Klick erstellen."
+      },
+      "security": {
+        "title": "Sicher und zuverlässig",
+        "description": "Ihre Daten sind mit den neuesten Sicherheitstechnologien geschützt. Token-authentifizierter Zugang, automatische Sicherung und DSGVO-Konformität."
+      }
+    },
+    "footer": "© 2024 Best Time. Alle Rechte vorbehalten."
+  },
+  "home": {
+    "hero": {
+      "title": "Zeiterfassungslösung konform mit europäischen Vorschriften",
+      "subtitle": "Erfassen, verfolgen und verwalten Sie die Arbeitszeit Ihres Teams mühelos. Konform mit der europäischen Richtlinie ab 2027.",
+      "cta": "Jetzt beginnen"
+    },
+    "features": {
+      "title": "Alles was Sie brauchen",
+      "subtitle": "Eine vollständige Plattform zur effizienten Verwaltung der Arbeitszeit"
+    },
+    "footer": {
+      "links": "Schnelllinks",
+      "legal": "Rechtliches"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "admin": {
+      "title": "Admin-Dashboard",
+      "todayHours": "Heutige Stunden",
+      "weekHours": "Stunden dieser Woche",
+      "totalEmployees": "Gesamte Mitarbeiter",
+      "activeEntries": "Aktive Erfassungen",
+      "activeEntriesTitle": "Aktive Erfassungen"
+    },
+    "employee": {
+      "clocking": "Zeiterfassung",
+      "statistics": "Statistiken",
+      "today": "Heute",
+      "thisWeek": "Diese Woche",
+      "activeEntry": "Aktive Erfassung"
+    }
+  },
+  "timeEntries": {
+    "title": "Meine Zeiterfassungen",
+    "addEntry": "Eintrag hinzufügen",
+    "noEntries": "Keine Zeiterfassungen gefunden",
+    "form": {
+      "title": "Zeiterfassung hinzufügen",
+      "date": "Datum",
+      "startTime": "Startzeit",
+      "endTime": "Endzeit",
+      "project": "Projekt",
+      "projectPlaceholder": "Projekt auswählen",
+      "noProject": "Kein Projekt",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung der geleisteten Arbeit...",
+      "requiredFieldsError": "Bitte füllen Sie alle erforderlichen Felder aus",
+      "invalidTimeRange": "Die Endzeit muss nach der Startzeit liegen",
+      "createError": "Fehler beim Erstellen des Eintrags"
+    },
+    "card": {
+      "inProgress": "In Bearbeitung",
+      "started": "Gestartet",
+      "duration": "Dauer",
+      "active": "Aktiv"
+    },
+    "noActiveEntries": "Keine aktiven Erfassungen",
+    "clocking": {
+      "activeSince": "Aktiv seit:",
+      "stop": "Erfassung stoppen",
+      "start": "Erfassung starten",
+      "project": "Projekt",
+      "projectPlaceholder": "Projekt auswählen",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung der Arbeit..."
+    }
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich",
+    "email": "Die E-Mail-Adresse ist nicht gültig",
+    "min": "Dieses Feld muss mindestens {min} Zeichen enthalten",
+    "max": "Dieses Feld darf maximal {max} Zeichen enthalten"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten",
+    "network": "Serververbindungsfehler",
+    "unauthorized": "Nicht autorisiert",
+    "notFound": "Ressource nicht gefunden",
+    "serverError": "Serverfehler"
+  },
+  "success": {
+    "created": "Erfolgreich erstellt",
+    "updated": "Erfolgreich aktualisiert",
+    "deleted": "Erfolgreich gelöscht"
+  }
+}

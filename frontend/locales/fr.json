@@ -1,0 +1,235 @@
+{
+  "appName": "Best Time",
+  "common": {
+    "welcome": "Bienvenue",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "submit": "Valider",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "reset": "Réinitialiser",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "optional": "optionnel",
+    "admin": "Administrateur",
+    "view": "Voir",
+    "actions": "Actions"
+  },
+  "auth": {
+    "title": "Connexion",
+    "subtitle": "Connectez-vous à votre compte pour continuer",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "emailPlaceholder": "votre[at]email.com",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Se connecter",
+    "loggingIn": "Connexion en cours...",
+    "loginError": "Erreur de connexion. Vérifiez vos identifiants.",
+    "logoutSuccess": "Déconnexion réussie",
+    "demoAccounts": "Compte de démonstration disponible",
+    "admin": "Admin",
+    "employee": "Employé"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "timeEntries": "Mes temps",
+    "projects": "Projets",
+    "settings": "Paramètres",
+    "profile": "Mon profil"
+  },
+  "login": {
+    "tagline": "Votre solution de suivi du temps professionnelle",
+    "mobileTagline": "Votre solution de suivi du temps",
+    "regulation": {
+      "title": "Conformité réglementaire européenne",
+      "description": "À partir du 1er janvier 2027, la réglementation européenne (Directive 2003/88/CE et arrêt CJUE du 14 mai 2019) oblige tous les employeurs à mettre en place un système objectif, fiable et accessible pour enregistrer quotidiennement le temps de travail de chaque salarié.",
+      "compliance": "✅ Best Time répond parfaitement à cette obligation légale avec un enregistrement horodaté, traçable et vérifiable de toutes les heures travaillées."
+    },
+    "features": {
+      "realtime": {
+        "title": "Suivi en temps réel",
+        "description": "Enregistrez automatiquement votre temps de travail avec un simple clic. Pointage instantané et précis pour une traçabilité parfaite."
+      },
+      "reports": {
+        "title": "Rapports détaillés",
+        "description": "Visualisez vos heures par projet, par semaine ou par mois. Tableaux de bord intuitifs avec graphiques pour une analyse rapide et efficace."
+      },
+      "team": {
+        "title": "Gestion d'équipe",
+        "description": "Les administrateurs peuvent suivre le temps de toute l'équipe, gérer les projets, assigner les tâches et générer des rapports consolidés en un clic."
+      },
+      "security": {
+        "title": "Sécurisé et fiable",
+        "description": "Vos données sont protégées avec les dernières technologies de sécurité. Accès authentifié par token, sauvegarde automatique et conformité RGPD."
+      }
+    },
+    "footer": "© 2024 Best Time. Tous droits réservés."
+  },
+  "home": {
+    "hero": {
+      "title": "La solution de gestion du temps conforme à la réglementation européenne",
+      "subtitle": "Enregistrez, suivez et gérez le temps de travail de votre équipe en toute simplicité. Conforme à la directive européenne dès 2027.",
+      "cta": "Commencer maintenant"
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin",
+      "subtitle": "Une plateforme complète pour gérer efficacement le temps de travail"
+    },
+    "footer": {
+      "links": "Liens rapides",
+      "legal": "Légal"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "admin": {
+      "title": "Dashboard Admin",
+      "todayHours": "Heures aujourd'hui",
+      "weekHours": "Heures cette semaine",
+      "totalEmployees": "Total employés",
+      "activeEntries": "Pointages actifs",
+      "activeEntriesTitle": "Pointages actifs"
+    },
+    "employee": {
+      "clocking": "Pointage",
+      "statistics": "Statistiques",
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine",
+      "activeEntry": "Pointage en cours"
+    }
+  },
+  "timeEntries": {
+    "title": "Mes temps",
+    "addEntry": "Ajouter une entrée",
+    "noEntries": "Aucune entrée de temps trouvée",
+    "form": {
+      "title": "Ajouter une entrée de temps",
+      "date": "Date",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "project": "Projet",
+      "projectPlaceholder": "Sélectionner un projet",
+      "noProject": "Aucun projet",
+      "description": "Description",
+      "descriptionPlaceholder": "Description du travail effectué...",
+      "requiredFieldsError": "Veuillez remplir tous les champs requis",
+      "invalidTimeRange": "L'heure de fin doit être postérieure à l'heure de début",
+      "createError": "Erreur lors de la création de l'entrée"
+    },
+    "card": {
+      "inProgress": "En cours",
+      "started": "Commencé",
+      "duration": "Durée",
+      "active": "Actif"
+    },
+    "noActiveEntries": "Aucun pointage actif",
+    "clocking": {
+      "activeSince": "Pointage en cours depuis :",
+      "stop": "Arrêter le pointage",
+      "start": "Démarrer le pointage",
+      "project": "Projet",
+      "projectPlaceholder": "Sélectionner un projet",
+      "description": "Description",
+      "descriptionPlaceholder": "Description du travail..."
+    }
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "email": "L'adresse email n'est pas valide",
+    "min": "Ce champ doit contenir au moins {min} caractères",
+    "max": "Ce champ ne peut pas dépasser {max} caractères"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "network": "Erreur de connexion au serveur",
+    "unauthorized": "Non autorisé",
+    "notFound": "Ressource introuvable",
+    "serverError": "Erreur serveur"
+  },
+  "success": {
+    "created": "Créé avec succès",
+    "updated": "Modifié avec succès",
+    "deleted": "Supprimé avec succès"
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "users": "Utilisateurs",
+      "projects": "Projets",
+      "statistics": "Statistiques",
+      "settings": "Paramètres",
+      "logs": "Logs",
+      "activityLogs": "Logs d'activité",
+      "technicalLogs": "Logs techniques"
+    },
+    "dashboard": {
+      "title": "Administration",
+      "subtitle": "Gérez votre équipe et vos projets"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Créez et gérez les comptes utilisateurs",
+      "createButton": "Créer un utilisateur",
+      "createTitle": "Créer un utilisateur",
+      "editTitle": "Modifier un utilisateur",
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "filterByRole": "Filtrer par rôle",
+      "allRoles": "Tous les rôles",
+      "noUsers": "Aucun utilisateur trouvé",
+      "name": "Nom",
+      "role": "Rôle",
+      "createdAt": "Créé le",
+      "passwordHint": "Laissez vide pour ne pas modifier",
+      "deleteConfirm": "Confirmer la suppression",
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer l'utilisateur {name} ?"
+    },
+    "logs": {
+      "technical": {
+        "title": "Logs techniques",
+        "subtitle": "Consultez les logs de l'application Laravel",
+        "linesPlaceholder": "Nombre de lignes",
+        "filterByLevel": "Filtrer par niveau",
+        "allLevels": "Tous les niveaux",
+        "noLogs": "Aucun log trouvé"
+      },
+      "activity": {
+        "title": "Logs d'activité",
+        "subtitle": "Trace de toutes les actions des utilisateurs",
+        "searchPlaceholder": "Rechercher dans les logs...",
+        "filterByAction": "Filtrer par action",
+        "allActions": "Toutes les actions",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "noLogs": "Aucun log d'activité trouvé",
+        "system": "Système",
+        "user": "Utilisateur",
+        "action": "Action",
+        "model": "Modèle",
+        "details": "Détails",
+        "timestamp": "Date",
+        "created": "Créé",
+        "updated": "Modifié",
+        "deleted": "Supprimé",
+        "login": "Connexion",
+        "logout": "Déconnexion",
+        "clockIn": "Pointage entrant",
+        "clockOut": "Pointage sortant"
+      }
+    },
+    "common": {
+      "view": "Voir",
+      "actions": "Actions",
+      "refresh": "Actualiser"
+    }
+  }
+}

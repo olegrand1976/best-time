@@ -1,0 +1,160 @@
+{
+  "common": {
+    "welcome": "Benvenuto",
+    "logout": "Esci",
+    "login": "Accedi",
+    "loading": "Caricamento...",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "submit": "Invia",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "reset": "Reimposta",
+    "confirm": "Conferma",
+    "yes": "Sì",
+    "no": "No",
+    "optional": "opzionale"
+  },
+  "auth": {
+    "title": "Accesso",
+    "subtitle": "Accedi al tuo account per continuare",
+    "email": "Indirizzo email",
+    "password": "Password",
+    "emailPlaceholder": "tua[at]email.it",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Accedi",
+    "loggingIn": "Accesso in corso...",
+    "loginError": "Errore di accesso. Controlla le tue credenziali.",
+    "logoutSuccess": "Disconnessione riuscita",
+    "demoAccounts": "Account demo disponibili",
+    "admin": "Admin",
+    "employee": "Dipendente"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "timeEntries": "Le mie registrazioni",
+    "projects": "Progetti",
+    "settings": "Impostazioni",
+    "profile": "Il mio profilo"
+  },
+  "login": {
+    "tagline": "La tua soluzione professionale per il tracciamento del tempo",
+    "mobileTagline": "La tua soluzione per il tracciamento del tempo",
+    "regulation": {
+      "title": "Conformità normativa europea",
+      "description": "Dal 1 gennaio 2027, le normative europee (Direttiva 2003/88/CE e sentenza della CGUE del 14 maggio 2019) richiedono a tutti i datori di lavoro di implementare un sistema oggettivo, affidabile e accessibile per registrare quotidianamente l'orario di lavoro di ciascun dipendente.",
+      "compliance": "✅ Best Time soddisfa pienamente questo obbligo legale con una registrazione temporale, tracciabile e verificabile di tutte le ore lavorate."
+    },
+    "features": {
+      "realtime": {
+        "title": "Tracciamento in tempo reale",
+        "description": "Registra automaticamente il tuo tempo di lavoro con un solo clic. Tracciamento istantaneo e preciso per una perfetta tracciabilità."
+      },
+      "reports": {
+        "title": "Rapporti dettagliati",
+        "description": "Visualizza le tue ore per progetto, settimana o mese. Dashboard intuitive con grafici per un'analisi rapida ed efficiente."
+      },
+      "team": {
+        "title": "Gestione del team",
+        "description": "Gli amministratori possono tracciare il tempo dell'intero team, gestire i progetti, assegnare attività e generare rapporti consolidati con un clic."
+      },
+      "security": {
+        "title": "Sicuro e affidabile",
+        "description": "I tuoi dati sono protetti con le ultime tecnologie di sicurezza. Accesso autenticato tramite token, backup automatico e conformità GDPR."
+      }
+    },
+    "footer": "© 2024 Best Time. Tutti i diritti riservati."
+  },
+  "home": {
+    "hero": {
+      "title": "Soluzione di tracciamento del tempo conforme alle normative europee",
+      "subtitle": "Registra, monitora e gestisci il tempo di lavoro del tuo team con facilità. Conforme alla direttiva europea dal 2027.",
+      "cta": "Inizia ora"
+    },
+    "features": {
+      "title": "Tutto ciò di cui hai bisogno",
+      "subtitle": "Una piattaforma completa per gestire efficacemente il tempo di lavoro"
+    },
+    "footer": {
+      "links": "Link rapidi",
+      "legal": "Legale"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "admin": {
+      "title": "Dashboard Admin",
+      "todayHours": "Ore di oggi",
+      "weekHours": "Ore di questa settimana",
+      "totalEmployees": "Totale dipendenti",
+      "activeEntries": "Registrazioni attive",
+      "activeEntriesTitle": "Registrazioni attive"
+    },
+    "employee": {
+      "clocking": "Registrazione tempo",
+      "statistics": "Statistiche",
+      "today": "Oggi",
+      "thisWeek": "Questa settimana",
+      "activeEntry": "Registrazione attiva"
+    }
+  },
+  "timeEntries": {
+    "title": "Le mie registrazioni",
+    "addEntry": "Aggiungi registrazione",
+    "noEntries": "Nessuna registrazione trovata",
+    "form": {
+      "title": "Aggiungi registrazione tempo",
+      "date": "Data",
+      "startTime": "Ora di inizio",
+      "endTime": "Ora di fine",
+      "project": "Progetto",
+      "projectPlaceholder": "Seleziona un progetto",
+      "noProject": "Nessun progetto",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Descrizione del lavoro svolto...",
+      "requiredFieldsError": "Compila tutti i campi obbligatori",
+      "invalidTimeRange": "L'ora di fine deve essere successiva all'ora di inizio",
+      "createError": "Errore nella creazione della registrazione"
+    },
+    "card": {
+      "inProgress": "In corso",
+      "started": "Iniziato",
+      "duration": "Durata",
+      "active": "Attivo"
+    },
+    "noActiveEntries": "Nessuna registrazione attiva",
+    "clocking": {
+      "activeSince": "Attivo da:",
+      "stop": "Ferma registrazione",
+      "start": "Avvia registrazione",
+      "project": "Progetto",
+      "projectPlaceholder": "Seleziona un progetto",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Descrizione del lavoro..."
+    }
+  },
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "email": "L'indirizzo email non è valido",
+    "min": "Questo campo deve contenere almeno {min} caratteri",
+    "max": "Questo campo non può superare {max} caratteri"
+  },
+  "errors": {
+    "generic": "Si è verificato un errore",
+    "network": "Errore di connessione al server",
+    "unauthorized": "Non autorizzato",
+    "notFound": "Risorsa non trovata",
+    "serverError": "Errore del server"
+  },
+  "success": {
+    "created": "Creato con successo",
+    "updated": "Aggiornato con successo",
+    "deleted": "Eliminato con successo"
+  }
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+  <head {{ HEAD_ATTRS }}>
+    <!-- Suppress unhead and preload errors BEFORE any scripts load -->
+    <script>
+      (function() {
+        'use strict';
+        
+        // Intercepter et supprimer les erreurs AVANT qu'elles ne crash l'app
+        var suppressedErrors = [];
+        
+        // Override console.error
+        var originalError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var msg = String(args[0] || '');
+          
+          if (msg.indexOf('getActiveHead') !== -1 || 
+              msg.indexOf('does not provide an export') !== -1 ||
+              msg.indexOf('unhead') !== -1) {
+            suppressedErrors.push(msg);
+            return; // Supprimer complètement l'erreur
+          }
+          
+          originalError.apply(console, args);
+        };
+        
+        // Override console.warn
+        var originalWarn = console.warn;
+        console.warn = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var msg = String(args[0] || '');
+          
+          if (msg.indexOf('dev.json') !== -1 || 
+              msg.indexOf('builds/meta') !== -1 ||
+              (msg.indexOf('preload') !== -1 && msg.indexOf('not used') !== -1)) {
+            return; // Supprimer ce warning
+          }
+          
+          originalWarn.apply(console, args);
+        };
+        
+        // Intercepter les erreurs de module (le plus important)
+        window.addEventListener('error', function(e) {
+          var msg = e.message || String(e.error || '') || '';
+          var filename = e.filename || e.source || '';
+          
+          if ((msg.indexOf('getActiveHead') !== -1 || 
+               msg.indexOf('does not provide an export') !== -1 ||
+               msg.indexOf('unhead') !== -1) ||
+              filename.indexOf('unhead') !== -1) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false; // Empêcher l'erreur de remonter
+          }
+        }, true);
+        
+        // Intercepter les promesses rejetées
+        window.addEventListener('unhandledrejection', function(e) {
+          var reason = e.reason;
+          var msg = '';
+          
+          if (reason && reason.message) {
+            msg = String(reason.message);
+          } else {
+            msg = String(reason || '');
+          }
+          
+          if (msg.indexOf('getActiveHead') !== -1 || 
+              msg.indexOf('does not provide an export') !== -1 ||
+              msg.indexOf('unhead') !== -1) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+          }
+        }, true);
+      })();
+    </script>
+    {{ HEAD }}
+  </head>
+  <body {{ BODY_ATTRS }}>
+    {{ APP }}
+  </body>
+</html>

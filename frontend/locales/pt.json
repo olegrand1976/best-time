@@ -1,0 +1,160 @@
+{
+  "common": {
+    "welcome": "Bem-vindo",
+    "logout": "Sair",
+    "login": "Entrar",
+    "loading": "A carregar...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Fechar",
+    "submit": "Submeter",
+    "back": "Voltar",
+    "next": "Seguinte",
+    "previous": "Anterior",
+    "search": "Pesquisar",
+    "filter": "Filtrar",
+    "reset": "Repor",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não",
+    "optional": "opcional"
+  },
+  "auth": {
+    "title": "Iniciar sessão",
+    "subtitle": "Inicie sessão na sua conta para continuar",
+    "email": "Endereço de email",
+    "password": "Palavra-passe",
+    "emailPlaceholder": "seu[at]email.pt",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Iniciar sessão",
+    "loggingIn": "A iniciar sessão...",
+    "loginError": "Erro de início de sessão. Verifique as suas credenciais.",
+    "logoutSuccess": "Sessão terminada com sucesso",
+    "demoAccounts": "Contas de demonstração disponíveis",
+    "admin": "Admin",
+    "employee": "Funcionário"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "timeEntries": "As minhas entradas",
+    "projects": "Projetos",
+    "settings": "Definições",
+    "profile": "O meu perfil"
+  },
+  "login": {
+    "tagline": "A sua solução profissional de registo de tempo",
+    "mobileTagline": "A sua solução de registo de tempo",
+    "regulation": {
+      "title": "Conformidade regulamentar europeia",
+      "description": "A partir de 1 de janeiro de 2027, os regulamentos europeus (Diretiva 2003/88/CE e sentença do TJUE de 14 de maio de 2019) exigem que todos os empregadores implementem um sistema objetivo, confiável e acessível para registar diariamente o tempo de trabalho de cada funcionário.",
+      "compliance": "✅ Best Time cumpre plenamente esta obrigação legal com um registo com carimbo de data/hora, rastreável e verificável de todas as horas trabalhadas."
+    },
+    "features": {
+      "realtime": {
+        "title": "Registo em tempo real",
+        "description": "Registe automaticamente o seu tempo de trabalho com um único clique. Registo instantâneo e preciso para uma rastreabilidade perfeita."
+      },
+      "reports": {
+        "title": "Relatórios detalhados",
+        "description": "Visualize as suas horas por projeto, semana ou mês. Painéis intuitivos com gráficos para uma análise rápida e eficiente."
+      },
+      "team": {
+        "title": "Gestão de equipa",
+        "description": "Os administradores podem acompanhar o tempo de toda a equipa, gerir projetos, atribuir tarefas e gerar relatórios consolidados com um clique."
+      },
+      "security": {
+        "title": "Seguro e fiável",
+        "description": "Os seus dados estão protegidos com as mais recentes tecnologias de segurança. Acesso autenticado por token, cópia de segurança automática e conformidade com o RGPD."
+      }
+    },
+    "footer": "© 2024 Best Time. Todos os direitos reservados."
+  },
+  "home": {
+    "hero": {
+      "title": "Solução de gestão de tempo em conformidade com a regulamentação europeia",
+      "subtitle": "Registe, acompanhe e gere o tempo de trabalho da sua equipa com facilidade. Conforme com a diretiva europeia a partir de 2027.",
+      "cta": "Começar agora"
+    },
+    "features": {
+      "title": "Tudo o que precisa",
+      "subtitle": "Uma plataforma completa para gerir eficientemente o tempo de trabalho"
+    },
+    "footer": {
+      "links": "Links rápidos",
+      "legal": "Legal"
+    }
+  },
+  "dashboard": {
+    "title": "Painel",
+    "admin": {
+      "title": "Painel Admin",
+      "todayHours": "Horas de hoje",
+      "weekHours": "Horas desta semana",
+      "totalEmployees": "Total de funcionários",
+      "activeEntries": "Entradas ativas",
+      "activeEntriesTitle": "Entradas ativas"
+    },
+    "employee": {
+      "clocking": "Registo de tempo",
+      "statistics": "Estatísticas",
+      "today": "Hoje",
+      "thisWeek": "Esta semana",
+      "activeEntry": "Entrada ativa"
+    }
+  },
+  "timeEntries": {
+    "title": "As minhas entradas",
+    "addEntry": "Adicionar entrada",
+    "noEntries": "Nenhuma entrada encontrada",
+    "form": {
+      "title": "Adicionar entrada de tempo",
+      "date": "Data",
+      "startTime": "Hora de início",
+      "endTime": "Hora de fim",
+      "project": "Projeto",
+      "projectPlaceholder": "Selecionar um projeto",
+      "noProject": "Sem projeto",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descrição do trabalho realizado...",
+      "requiredFieldsError": "Preencha todos os campos obrigatórios",
+      "invalidTimeRange": "A hora de fim deve ser posterior à hora de início",
+      "createError": "Erro ao criar entrada"
+    },
+    "card": {
+      "inProgress": "Em curso",
+      "started": "Iniciado",
+      "duration": "Duração",
+      "active": "Ativo"
+    },
+    "noActiveEntries": "Nenhuma entrada ativa",
+    "clocking": {
+      "activeSince": "Ativo desde:",
+      "stop": "Parar registo",
+      "start": "Iniciar registo",
+      "project": "Projeto",
+      "projectPlaceholder": "Selecionar um projeto",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descrição do trabalho..."
+    }
+  },
+  "validation": {
+    "required": "Este campo é obrigatório",
+    "email": "O endereço de email não é válido",
+    "min": "Este campo deve conter pelo menos {min} caracteres",
+    "max": "Este campo não pode exceder {max} caracteres"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro",
+    "network": "Erro de ligação ao servidor",
+    "unauthorized": "Não autorizado",
+    "notFound": "Recurso não encontrado",
+    "serverError": "Erro do servidor"
+  },
+  "success": {
+    "created": "Criado com sucesso",
+    "updated": "Atualizado com sucesso",
+    "deleted": "Eliminado com sucesso"
+  }
+}

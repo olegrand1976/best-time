@@ -1,11 +1,11 @@
 <template>
   <UCard>
     <template #header>
-      <h3 class="text-lg font-semibold">Pointages actifs</h3>
+      <h3 class="text-lg font-semibold">{{ $t('dashboard.admin.activeEntriesTitle') }}</h3>
     </template>
 
     <div v-if="activeEntries.length === 0" class="text-center py-8 text-gray-500">
-      <p>Aucun pointage actif</p>
+      <p>{{ $t('timeEntries.noActiveEntries') }}</p>
     </div>
 
     <div v-else class="space-y-4">
@@ -18,13 +18,13 @@
           <div>
             <p class="font-semibold">{{ entry.user?.name }}</p>
             <p class="text-sm text-gray-600">
-              {{ entry.project?.name || 'Aucun projet' }}
+              {{ entry.project?.name || $t('timeEntries.form.noProject') }}
             </p>
             <p class="text-xs text-gray-500 mt-1">
-              Commencé : {{ formatDateTime(entry.start_time) }}
+              {{ $t('timeEntries.card.started') }} : {{ formatDateTime(entry.start_time) }}
             </p>
           </div>
-          <UBadge color="green">Actif</UBadge>
+          <UBadge color="green">{{ $t('timeEntries.card.active') }}</UBadge>
         </div>
       </div>
     </div>
@@ -40,9 +40,11 @@ const activeEntries = computed(() => {
   return props.stats?.active_entries || []
 })
 
+const { locale } = useI18n()
+
 const formatDateTime = (dateString: string): string => {
   const date = new Date(dateString)
-  return date.toLocaleString('fr-FR', {
+  return date.toLocaleString(locale.value, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

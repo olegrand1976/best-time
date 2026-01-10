@@ -20,6 +20,7 @@ class TimeEntry extends Model
      */
     protected $fillable = [
         'user_id',
+        'encoded_by_user_id',
         'project_id',
         'start_time',
         'end_time',
@@ -46,6 +47,14 @@ class TimeEntry extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the user who encoded this time entry (if different from owner).
+     */
+    public function encodedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'encoded_by_user_id');
     }
 
     /**

@@ -5,7 +5,7 @@
     </div>
 
     <div v-else-if="entries.length === 0" class="text-center py-12">
-      <p class="text-gray-500">Aucune entrée de temps trouvée</p>
+      <p class="text-gray-500">{{ $t('timeEntries.noEntries') }}</p>
     </div>
 
     <div v-else class="space-y-4">

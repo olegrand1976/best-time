@@ -11,7 +11,21 @@
       <div class="relative z-10">
         <div class="mb-12">
           <img src="/logo.svg" alt="Best Time" class="h-16 mb-4" />
-          <p class="text-xl text-blue-100">Votre solution de suivi du temps professionnelle</p>
+          <p class="text-xl text-blue-100">{{ $t('login.tagline') }}</p>
+        </div>
+
+        <!-- Réglementation européenne -->
+        <div class="mb-8 p-4 bg-yellow-500/20 backdrop-blur-sm rounded-lg border border-yellow-400/30">
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-yellow-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-1">{{ $t('login.regulation.title') }}</h3>
+              <p class="text-sm text-blue-100 leading-relaxed">{{ $t('login.regulation.description') }}</p>
+              <p class="text-xs text-yellow-200 mt-2 font-medium">{{ $t('login.regulation.compliance') }}</p>
+            </div>
+          </div>
         </div>
 
         <div class="space-y-8">
@@ -22,8 +36,8 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-semibold mb-2">Suivi en temps réel</h3>
-              <p class="text-blue-100">Enregistrez automatiquement votre temps de travail avec un simple clic. Pointage instantané et précis.</p>
+              <h3 class="text-xl font-semibold mb-2">{{ $t('login.features.realtime.title') }}</h3>
+              <p class="text-blue-100">{{ $t('login.features.realtime.description') }}</p>
             </div>
           </div>
 
@@ -34,8 +48,8 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-semibold mb-2">Rapports détaillés</h3>
-              <p class="text-blue-100">Visualisez vos heures par projet, par semaine ou par mois. Tableaux de bord intuitifs pour une analyse rapide.</p>
+              <h3 class="text-xl font-semibold mb-2">{{ $t('login.features.reports.title') }}</h3>
+              <p class="text-blue-100">{{ $t('login.features.reports.description') }}</p>
             </div>
           </div>
 
@@ -46,8 +60,8 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-semibold mb-2">Gestion d'équipe</h3>
-              <p class="text-blue-100">Les administrateurs peuvent suivre le temps de toute l'équipe, gérer les projets et générer des rapports consolidés.</p>
+              <h3 class="text-xl font-semibold mb-2">{{ $t('login.features.team.title') }}</h3>
+              <p class="text-blue-100">{{ $t('login.features.team.description') }}</p>
             </div>
           </div>
 
@@ -58,15 +72,15 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-semibold mb-2">Sécurisé et fiable</h3>
-              <p class="text-blue-100">Vos données sont protégées avec les dernières technologies de sécurité. Accès sécurisé et sauvegarde automatique.</p>
+              <h3 class="text-xl font-semibold mb-2">{{ $t('login.features.security.title') }}</h3>
+              <p class="text-blue-100">{{ $t('login.features.security.description') }}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="relative z-10 text-blue-100 text-sm">
-        <p>© 2024 Best Time. Tous droits réservés.</p>
+        <p>{{ $t('login.footer') }}</p>
       </div>
     </div>
 
@@ -76,31 +90,31 @@
         <!-- Mobile Logo -->
         <div class="lg:hidden text-center mb-8">
           <img src="/logo.svg" alt="Best Time" class="h-14 mx-auto mb-2" />
-          <p class="text-gray-600">Votre solution de suivi du temps</p>
+          <p class="text-gray-600">{{ $t('login.mobileTagline') }}</p>
         </div>
 
         <!-- Desktop Logo -->
         <div class="hidden lg:block mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 mb-2">Bienvenue</h2>
-          <p class="text-gray-600">Connectez-vous à votre compte pour continuer</p>
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('common.welcome') }}</h2>
+          <p class="text-gray-600">{{ $t('auth.subtitle') }}</p>
         </div>
 
         <UCard class="shadow-xl border-0">
           <template #header>
             <div class="text-center">
-              <h3 class="text-2xl font-bold text-gray-900">Connexion</h3>
+              <h3 class="text-2xl font-bold text-gray-900">{{ $t('auth.title') }}</h3>
             </div>
           </template>
 
           <form @submit.prevent="handleLogin" class="space-y-6">
             <div>
-              <UFormGroup label="Adresse email" name="email" required>
+              <UFormGroup :label="$t('auth.email')" name="email" required>
                 <UInput
                   v-model="email"
                   type="email"
                   required
                   autocomplete="email"
-                  placeholder="votre@email.com"
+                  :placeholder="$t('auth.emailPlaceholder')"
                   size="lg"
                   icon="i-heroicons-envelope"
                   :ui="{
@@ -122,13 +136,13 @@
             </div>
 
             <div>
-              <UFormGroup label="Mot de passe" name="password" required>
+              <UFormGroup :label="$t('auth.password')" name="password" required>
                 <UInput
                   v-model="password"
                   type="password"
                   required
                   autocomplete="current-password"
-                  placeholder="••••••••"
+                  :placeholder="$t('auth.passwordPlaceholder')"
                   size="lg"
                   icon="i-heroicons-lock-closed"
                   :ui="{
@@ -171,10 +185,10 @@
                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                   </svg>
-                  Se connecter
+                  {{ $t('auth.loginButton') }}
                 </template>
                 <template v-else>
-                  Connexion en cours...
+                  {{ $t('auth.loggingIn') }}
                 </template>
               </UButton>
             </div>
@@ -182,10 +196,10 @@
 
           <template #footer>
             <div class="text-center text-sm text-gray-500">
-              <p>Compte de démonstration disponible</p>
+              <p>{{ $t('auth.demoAccounts') }}</p>
               <div class="mt-3 space-y-1 text-xs">
-                <p><strong>Admin:</strong> admin@besttime.test / password</p>
-                <p><strong>Employé:</strong> john@besttime.test / password</p>
+                <p><strong>{{ $t('auth.admin') }}:</strong> admin@besttime.test / password</p>
+                <p><strong>{{ $t('auth.employee') }}:</strong> john@besttime.test / password</p>
               </div>
             </div>
           </template>
@@ -193,6 +207,20 @@
 
         <!-- Mobile Features -->
         <div class="lg:hidden mt-8 space-y-4">
+          <!-- Réglementation mobile -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div class="flex items-start space-x-3">
+              <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+              <div>
+                <h4 class="font-semibold text-gray-900 mb-1">{{ $t('login.regulation.title') }}</h4>
+                <p class="text-sm text-gray-700 mb-2">{{ $t('login.regulation.description') }}</p>
+                <p class="text-xs text-yellow-700 font-medium">{{ $t('login.regulation.compliance') }}</p>
+              </div>
+            </div>
+          </div>
+
           <div class="bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-gray-200">
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -201,8 +229,8 @@
                 </svg>
               </div>
               <div>
-                <h4 class="font-semibold text-gray-900">Suivi en temps réel</h4>
-                <p class="text-sm text-gray-600">Pointage instantané et précis</p>
+                <h4 class="font-semibold text-gray-900">{{ $t('login.features.realtime.title') }}</h4>
+                <p class="text-sm text-gray-600">{{ $t('login.features.realtime.description').split('.')[0] }}</p>
               </div>
             </div>
           </div>
@@ -215,8 +243,8 @@
                 </svg>
               </div>
               <div>
-                <h4 class="font-semibold text-gray-900">Rapports détaillés</h4>
-                <p class="text-sm text-gray-600">Analysez vos données facilement</p>
+                <h4 class="font-semibold text-gray-900">{{ $t('login.features.reports.title') }}</h4>
+                <p class="text-sm text-gray-600">{{ $t('login.features.reports.description').split('.')[0] }}</p>
               </div>
             </div>
           </div>
@@ -228,10 +256,14 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'guest',
+  middleware: () => {
+    // Redirect to home page instead
+    return navigateTo('/')
+  },
   layout: false,
 })
 
+const { t } = useI18n()
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -248,7 +280,7 @@ const handleLogin = async () => {
     await login(email.value, password.value)
     await router.push('/dashboard')
   } catch (err: any) {
-    error.value = err.data?.message || 'Erreur de connexion. Vérifiez vos identifiants.'
+    error.value = err.data?.message || t('auth.loginError')
   } finally {
     loading.value = false
   }

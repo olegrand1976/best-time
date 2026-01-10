@@ -1,0 +1,160 @@
+{
+  "common": {
+    "welcome": "Welkom",
+    "logout": "Uitloggen",
+    "login": "Inloggen",
+    "loading": "Laden...",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "close": "Sluiten",
+    "submit": "Verzenden",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "reset": "Resetten",
+    "confirm": "Bevestigen",
+    "yes": "Ja",
+    "no": "Nee",
+    "optional": "optioneel"
+  },
+  "auth": {
+    "title": "Inloggen",
+    "subtitle": "Log in op uw account om door te gaan",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "emailPlaceholder": "uw[at]email.nl",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Inloggen",
+    "loggingIn": "Bezig met inloggen...",
+    "loginError": "Inlogfout. Controleer uw inloggegevens.",
+    "logoutSuccess": "Succesvol uitgelogd",
+    "demoAccounts": "Demo-accounts beschikbaar",
+    "admin": "Admin",
+    "employee": "Medewerker"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "timeEntries": "Mijn tijdsregistraties",
+    "projects": "Projecten",
+    "settings": "Instellingen",
+    "profile": "Mijn profiel"
+  },
+  "login": {
+    "tagline": "Uw professionele tijdregistratie-oplossing",
+    "mobileTagline": "Uw tijdregistratie-oplossing",
+    "regulation": {
+      "title": "Naleving Europese regelgeving",
+      "description": "Vanaf 1 januari 2027 vereisen Europese regelgevingen (Richtlijn 2003/88/EG en arrest van het Hof van Justitie van 14 mei 2019) dat alle werkgevers een objectief, betrouwbaar en toegankelijk systeem implementeren om de dagelijkse werktijd van elke werknemer te registreren.",
+      "compliance": "✅ Best Time voldoet volledig aan deze wettelijke verplichting met een tijdgestempelde, traceerbare en verifieerbare registratie van alle gewerkte uren."
+    },
+    "features": {
+      "realtime": {
+        "title": "Realtime registratie",
+        "description": "Registreer uw werktijd automatisch met één klik. Directe en nauwkeurige tijdregistratie voor perfecte traceerbaarheid."
+      },
+      "reports": {
+        "title": "Gedetailleerde rapporten",
+        "description": "Bekijk uw uren per project, week of maand. Intuïtieve dashboards met grafieken voor snelle en efficiënte analyse."
+      },
+      "team": {
+        "title": "Teambeheer",
+        "description": "Beheerders kunnen de tijd van het hele team volgen, projecten beheren, taken toewijzen en geconsolideerde rapporten genereren met één klik."
+      },
+      "security": {
+        "title": "Veilig en betrouwbaar",
+        "description": "Uw gegevens zijn beschermd met de nieuwste beveiligingstechnologieën. Token-geauthenticeerde toegang, automatische back-up en GDPR-naleving."
+      }
+    },
+    "footer": "© 2024 Best Time. Alle rechten voorbehouden."
+  },
+  "home": {
+    "hero": {
+      "title": "Tijdregistratie-oplossing conform Europese regelgeving",
+      "subtitle": "Registreer, volg en beheer de werktijd van uw team moeiteloos. Conform met de Europese richtlijn vanaf 2027.",
+      "cta": "Nu beginnen"
+    },
+    "features": {
+      "title": "Alles wat u nodig heeft",
+      "subtitle": "Een compleet platform voor efficiënt werktijdbeheer"
+    },
+    "footer": {
+      "links": "Snelle links",
+      "legal": "Juridisch"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "admin": {
+      "title": "Admin Dashboard",
+      "todayHours": "Uren vandaag",
+      "weekHours": "Uren deze week",
+      "totalEmployees": "Totaal medewerkers",
+      "activeEntries": "Actieve registraties",
+      "activeEntriesTitle": "Actieve registraties"
+    },
+    "employee": {
+      "clocking": "Tijdregistratie",
+      "statistics": "Statistieken",
+      "today": "Vandaag",
+      "thisWeek": "Deze week",
+      "activeEntry": "Actieve registratie"
+    }
+  },
+  "timeEntries": {
+    "title": "Mijn tijdsregistraties",
+    "addEntry": "Registratie toevoegen",
+    "noEntries": "Geen tijdsregistraties gevonden",
+    "form": {
+      "title": "Tijdsregistratie toevoegen",
+      "date": "Datum",
+      "startTime": "Starttijd",
+      "endTime": "Eindtijd",
+      "project": "Project",
+      "projectPlaceholder": "Selecteer een project",
+      "noProject": "Geen project",
+      "description": "Beschrijving",
+      "descriptionPlaceholder": "Beschrijving van uitgevoerd werk...",
+      "requiredFieldsError": "Vul alle verplichte velden in",
+      "invalidTimeRange": "Eindtijd moet na starttijd zijn",
+      "createError": "Fout bij het maken van registratie"
+    },
+    "card": {
+      "inProgress": "Bezig",
+      "started": "Gestart",
+      "duration": "Duur",
+      "active": "Actief"
+    },
+    "noActiveEntries": "Geen actieve registraties",
+    "clocking": {
+      "activeSince": "Actief sinds:",
+      "stop": "Stop registratie",
+      "start": "Start registratie",
+      "project": "Project",
+      "projectPlaceholder": "Selecteer een project",
+      "description": "Beschrijving",
+      "descriptionPlaceholder": "Beschrijving van werk..."
+    }
+  },
+  "validation": {
+    "required": "Dit veld is verplicht",
+    "email": "E-mailadres is niet geldig",
+    "min": "Dit veld moet minimaal {min} tekens bevatten",
+    "max": "Dit veld mag maximaal {max} tekens bevatten"
+  },
+  "errors": {
+    "generic": "Er is een fout opgetreden",
+    "network": "Serververbindingsfout",
+    "unauthorized": "Niet geautoriseerd",
+    "notFound": "Bron niet gevonden",
+    "serverError": "Serverfout"
+  },
+  "success": {
+    "created": "Succesvol aangemaakt",
+    "updated": "Succesvol bijgewerkt",
+    "deleted": "Succesvol verwijderd"
+  }
+}
