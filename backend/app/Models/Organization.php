@@ -28,6 +28,9 @@ class Organization extends Model
         'phone',
         'email',
         'is_active',
+        'location_required',
+        'geofencing_enabled',
+        'geofencing_radius',
     ];
 
     /**
@@ -39,6 +42,8 @@ class Organization extends Model
     {
         return [
             'is_active' => 'boolean',
+            'location_required' => 'boolean',
+            'geofencing_enabled' => 'boolean',
         ];
     }
 

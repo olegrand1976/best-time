@@ -45,8 +45,13 @@ class DashboardController extends Controller
             ->whereNull('end_time')
             ->get();
 
-        // Total employees
-        $totalEmployees = User::where('role', 'employee')->count();
+        // Total employees count
+        $totalEmployees = User::where('role', 'ouvrier')->count();
+        $totalManagers = User::whereIn('role', ['admin', 'responsable', 'team_leader'])->count();
+
+        // Total projects
+        $totalProjects = \App\Models\Project::count();
+        $activeProjects = \App\Models\Project::where('status', 'active')->count();
 
         // Hours this week
         $weekEntries = TimeEntry::thisWeek()
@@ -56,11 +61,36 @@ class DashboardController extends Controller
 
         $weekHours = $weekEntries->total_seconds ? round($weekEntries->total_seconds / 3600, 2) : 0;
 
+        // Recent activity (last 10 entries)
+        $recentActivity = TimeEntry::with(['user', 'project'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Stats by project today
+        $projectStats = TimeEntry::today()
+            ->whereNotNull('end_time')
+            ->select('project_id', DB::raw('SUM(duration) as total_seconds'))
+            ->groupBy('project_id')
+            ->with('project')
+            ->get()
+            ->map(function ($stat) {
+                return [
+                    'project_name' => $stat->project->name ?? 'N/A',
+                    'hours' => round($stat->total_seconds / 3600, 2),
+                ];
+            });
+
         return response()->json([
             'today_hours' => $todayHours,
             'week_hours' => $weekHours,
             'total_employees' => $totalEmployees,
+            'total_managers' => $totalManagers,
+            'total_projects' => $totalProjects,
+            'active_projects_count' => $activeProjects,
             'active_entries' => TimeEntryResource::collection($activeEntries),
+            'recent_activity' => TimeEntryResource::collection($recentActivity),
+            'project_stats_today' => $projectStats,
         ]);
     }
 

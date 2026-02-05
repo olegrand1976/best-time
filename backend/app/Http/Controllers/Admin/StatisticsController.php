@@ -32,24 +32,36 @@ class StatisticsController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $startDate = $request->input('start_date', now()->startOfMonth());
-        $endDate = $request->input('end_date', now()->endOfMonth());
+        $startDate = $request->input('start_date', now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', now()->endOfMonth()->toDateString());
+
+        // Ensure dates include full range
+        $start = $startDate . ' 00:00:00';
+        $end = $endDate . ' 23:59:59';
+
+        $totalHours = round(
+            TimeEntry::whereBetween('start_time', [$start, $end])
+                ->whereNotNull('end_time')
+                ->sum('duration') / 3600,
+            2
+        );
+
+        $totalEntries = TimeEntry::whereBetween('start_time', [$start, $end])->count();
+        
+        $daysCount = now()->parse($startDate)->diffInDays(now()->parse($endDate)) + 1;
+        $avgPerDay = $daysCount > 0 ? round($totalHours / $daysCount, 2) : 0;
 
         $stats = [
-            'total_users' => User::count(),
-            'total_employees' => User::where('role', 'employee')->count(),
-            'total_projects' => Project::count(),
-            'active_projects' => Project::where('status', 'active')->count(),
-            'total_time_entries' => TimeEntry::whereBetween('start_time', [$startDate, $endDate])->count(),
-            'total_hours' => round(
-                TimeEntry::whereBetween('start_time', [$startDate, $endDate])
-                    ->whereNotNull('end_time')
-                    ->sum('duration') / 3600,
-                2
-            ),
-            'hours_by_day' => $this->getHoursByDay($startDate, $endDate),
-            'hours_by_user' => $this->getHoursByUser($startDate, $endDate),
-            'hours_by_project' => $this->getHoursByProject($startDate, $endDate),
+            'summary' => [
+                'total_hours' => $totalHours,
+                'avg_per_day' => $avgPerDay,
+                'total_entries' => $totalEntries,
+                'total_users' => User::count(),
+                'total_projects' => Project::count(),
+            ],
+            'by_day' => $this->getHoursByDay($start, $end),
+            'by_employee' => $this->getHoursByUser($start, $end),
+            'by_project' => $this->getHoursByProject($start, $end),
         ];
 
         return response()->json($stats);
@@ -81,12 +93,11 @@ class StatisticsController extends Controller
      */
     private function getHoursByUser(string $startDate, string $endDate): array
     {
-        return User::where('role', 'employee')
+        return User::where('role', 'ouvrier')
             ->withSum([
                 'timeEntries as total_hours' => function ($query) use ($startDate, $endDate) {
                     $query->whereBetween('start_time', [$startDate, $endDate])
-                        ->whereNotNull('end_time')
-                        ->select(DB::raw('SUM(duration) / 3600'));
+                        ->whereNotNull('end_time');
                 },
             ], 'duration')
             ->get()
@@ -94,8 +105,10 @@ class StatisticsController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'hours' => round((float) ($user->total_hours ?? 0), 2),
+                'hours' => round((float) ($user->total_hours ?? 0) / 3600, 2),
             ])
+            ->filter(fn ($user) => $user['hours'] > 0)
+            ->values()
             ->toArray();
     }
 
@@ -107,8 +120,7 @@ class StatisticsController extends Controller
         return Project::withSum([
             'timeEntries as total_hours' => function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('start_time', [$startDate, $endDate])
-                    ->whereNotNull('end_time')
-                    ->select(DB::raw('SUM(duration) / 3600'));
+                    ->whereNotNull('end_time');
             },
         ], 'duration')
             ->get()
@@ -116,7 +128,7 @@ class StatisticsController extends Controller
                 'id' => $project->id,
                 'name' => $project->name,
                 'client' => $project->client,
-                'hours' => round((float) ($project->total_hours ?? 0), 2),
+                'hours' => round((float) ($project->total_hours ?? 0) / 3600, 2),
             ])
             ->filter(fn ($project) => $project['hours'] > 0)
             ->values()

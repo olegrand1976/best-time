@@ -1,66 +1,70 @@
 <template>
-  <div>
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">{{ $t('dashboard.title') }}</h1>
-    </div>
-
-    <div v-if="loading" class="flex justify-center py-12">
-      <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-400" />
-    </div>
-
-    <div v-else>
-      <!-- Admin Dashboard -->
-      <div v-if="isAdmin" class="space-y-6">
-        <DashboardStats :stats="stats" />
-        <ActiveEntriesList />
+  <NuxtLayout :name="isAdmin ? 'admin' : 'default'">
+    <div>
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">{{ $t('dashboard.title') }}</h1>
       </div>
 
-      <!-- Employee Dashboard -->
-      <div v-else class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <UCard>
-            <template #header>
-              <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.clocking') }}</h3>
-            </template>
-            <ClockInOutButton />
-          </UCard>
+      <div v-if="loading" class="flex justify-center py-12">
+        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-400" />
+      </div>
 
-          <UCard>
-            <template #header>
-              <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.statistics') }}</h3>
-            </template>
-            <div class="space-y-4">
-              <div>
-                <p class="text-sm text-gray-600">{{ $t('dashboard.employee.today') }}</p>
-                <p class="text-2xl font-bold">{{ stats.today_hours }}h</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">{{ $t('dashboard.employee.thisWeek') }}</p>
-                <p class="text-2xl font-bold">{{ stats.week_hours }}h</p>
-              </div>
-            </div>
-          </UCard>
+      <div v-else>
+        <!-- Admin Dashboard -->
+        <div v-if="isAdmin" class="space-y-6">
+          <DashboardStats :stats="stats" />
+          <ActiveEntriesList :stats="stats" />
         </div>
 
-        <div v-if="activeEntry" class="mt-6">
-          <UCard>
-            <template #header>
-              <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.activeEntry') }}</h3>
-            </template>
-            <TimeEntryCard :entry="activeEntry" />
-          </UCard>
+        <!-- Employee Dashboard -->
+        <div v-else class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <UCard>
+              <template #header>
+                <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.clocking') }}</h3>
+              </template>
+              <ClockInOutButton />
+            </UCard>
+
+            <UCard>
+              <template #header>
+                <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.statistics') }}</h3>
+              </template>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-sm text-gray-600">{{ $t('dashboard.employee.today') }}</p>
+                  <p class="text-2xl font-bold">{{ stats.today_hours }}h</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-600">{{ $t('dashboard.employee.thisWeek') }}</p>
+                  <p class="text-2xl font-bold">{{ stats.week_hours }}h</p>
+                </div>
+              </div>
+            </UCard>
+          </div>
+
+          <div v-if="activeEntry" class="mt-6">
+            <UCard>
+              <template #header>
+                <h3 class="text-lg font-semibold">{{ $t('dashboard.employee.activeEntry') }}</h3>
+              </template>
+              <TimeEntryCard :entry="activeEntry" />
+            </UCard>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
+const { isAdmin } = useAuth()
+
 definePageMeta({
   middleware: 'auth',
+  layout: false, // We'll handle layout dynamically
 })
 
-const { isAdmin } = useAuth()
 const timeEntryStore = useTimeEntryStore()
 
 const loading = ref(true)

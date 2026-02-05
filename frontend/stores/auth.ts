@@ -4,7 +4,7 @@ interface User {
   id: number
   name: string
   email: string
-  role: 'admin' | 'employee'
+  role: 'admin' | 'responsable' | 'team_leader' | 'ouvrier' | 'employee'
 }
 
 interface AuthState {
@@ -22,7 +22,8 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAdmin: (state): boolean => state.user?.role === 'admin',
-    isEmployee: (state): boolean => state.user?.role === 'employee',
+    isManager: (state): boolean => ['admin', 'responsable', 'team_leader'].includes(state.user?.role || ''),
+    isEmployee: (state): boolean => ['ouvrier', 'employee'].includes(state.user?.role || ''),
   },
 
   actions: {
@@ -30,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = user
       this.token = token
       this.isAuthenticated = true
-      
+
       // Store token in localStorage
       if (process.client) {
         localStorage.setItem('auth_token', token)

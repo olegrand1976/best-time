@@ -40,8 +40,8 @@
         :columns="columns"
       >
         <template #role-data="{ row }">
-          <UBadge :color="row.role === 'admin' ? 'blue' : 'gray'">
-            {{ row.role === 'admin' ? $t('auth.admin') : $t('auth.employee') }}
+          <UBadge :color="getRoleColor(row.role)">
+            {{ $t(`admin.users.roles.${row.role}`) }}
           </UBadge>
         </template>
 
@@ -139,6 +139,15 @@ const columns = [
   { key: 'actions', label: t('common.actions') },
 ]
 
+const formatDate = (dateString: string) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return new Intl.RelativeTimeFormat('fr', { numeric: 'auto' }).format(
+    Math.round((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
+    'day'
+  )
+}
+
 const loadUsers = async () => {
   loading.value = true
   try {
@@ -198,6 +207,16 @@ const handleUserSaved = () => {
   showCreateModal.value = false
   editingUser.value = null
   loadUsers()
+}
+
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case 'admin': return 'blue'
+    case 'responsable': return 'purple'
+    case 'team_leader': return 'orange'
+    case 'ouvrier': return 'green'
+    default: return 'gray'
+  }
 }
 
 onMounted(() => {

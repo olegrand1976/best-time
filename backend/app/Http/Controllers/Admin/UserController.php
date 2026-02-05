@@ -18,18 +18,6 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!$request->user() || !$request->user()->isAdmin()) {
-                return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
-            }
-            return $next($request);
-        });
-    }
-    /**
      * Display a listing of users.
      */
     public function index(Request $request): AnonymousResourceCollection
@@ -64,7 +52,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'employee',
+            'role' => $request->role ?? 'ouvrier',
         ]);
 
         // Log the creation

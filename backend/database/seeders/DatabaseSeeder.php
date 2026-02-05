@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\TimeEntry;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -18,7 +19,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create organizations
+        // Truncate tables to allow re-seeding without unique constraint violations
+        // We use CASCADE to handle foreign key constraints in PostgreSQL
+        DB::statement('TRUNCATE TABLE time_entries CASCADE');
+        DB::statement('TRUNCATE TABLE projects CASCADE');
+        DB::statement('TRUNCATE TABLE users CASCADE');
+        DB::statement('TRUNCATE TABLE organizations CASCADE');
+
+        // Create organizations with geolocation settings
         $org1 = Organization::create([
             'name' => 'Construction ABC',
             'code' => 'ORG-001',
@@ -29,6 +37,9 @@ class DatabaseSeeder extends Seeder
             'country' => 'Belgique',
             'phone' => '+32 2 123 45 67',
             'email' => 'contact@construction-abc.be',
+            'location_required' => true,
+            'geofencing_enabled' => true,
+            'geofencing_radius' => 100, // 100 meters
         ]);
 
         $org2 = Organization::create([
@@ -41,6 +52,9 @@ class DatabaseSeeder extends Seeder
             'country' => 'Belgique',
             'phone' => '+32 3 987 65 43',
             'email' => 'info@services-xyz.be',
+            'location_required' => true,
+            'geofencing_enabled' => false,
+            'geofencing_radius' => null,
         ]);
 
         $org3 = Organization::create([
@@ -53,6 +67,9 @@ class DatabaseSeeder extends Seeder
             'country' => 'Belgique',
             'phone' => '+32 9 456 78 90',
             'email' => 'hello@tech-dev.be',
+            'location_required' => false,
+            'geofencing_enabled' => false,
+            'geofencing_radius' => null,
         ]);
 
         // Create admin users (can be without organization)
@@ -220,29 +237,45 @@ class DatabaseSeeder extends Seeder
         // teamLeader2 can encode for ouvrier4
         $teamLeader2->teamOuvriers()->attach([$ouvrier4->id]);
 
-        // Create projects
+        // Create projects with GPS coordinates and QR codes
         $project1 = Project::create([
             'name' => 'Construction Immeuble Résidentiel',
             'client' => 'Promoteur Immobilier ABC',
             'status' => 'active',
+            'latitude' => 50.8503,
+            'longitude' => 4.3517,
+            'geofence_radius' => 100,
+            'qr_code_token' => hash('sha256', 'project1-' . now()->timestamp),
         ]);
 
         $project2 = Project::create([
             'name' => 'Rénovation Façade',
             'client' => 'Syndic Copropriété',
             'status' => 'active',
+            'latitude' => 50.8467,
+            'longitude' => 4.3525,
+            'geofence_radius' => 50,
+            'qr_code_token' => hash('sha256', 'project2-' . now()->timestamp),
         ]);
 
         $project3 = Project::create([
             'name' => 'Maintenance Machines Production',
             'client' => 'Industrie Métallurgique',
             'status' => 'active',
+            'latitude' => 51.2194,
+            'longitude' => 4.4025,
+            'geofence_radius' => 200,
+            'qr_code_token' => hash('sha256', 'project3-' . now()->timestamp),
         ]);
 
         $project4 = Project::create([
             'name' => 'Installation Système Électrique',
             'client' => 'Bureau d\'Architecture',
             'status' => 'active',
+            'latitude' => 51.0543,
+            'longitude' => 3.7174,
+            'geofence_radius' => 75,
+            'qr_code_token' => hash('sha256', 'project4-' . now()->timestamp),
         ]);
 
         // Create time entries for ouvrier1 (encoded by himself)
@@ -341,5 +374,137 @@ class DatabaseSeeder extends Seeder
             'description' => 'Visite contrôle qualité',
             'duration' => 18000, // 5 hours
         ]);
+
+        // ========================================
+        // TIME ENTRIES WITH GEOLOCATION & QR CODE
+        // ========================================
+
+        // Entry with geolocation (within geofence)
+        TimeEntry::create([
+            'user_id' => $ouvrier1->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project1->id,
+            'start_time' => now()->subHours(6),
+            'end_time' => now()->subHours(2),
+            'description' => 'Travaux avec géolocalisation - dans le périmètre',
+            'duration' => 14400, // 4 hours
+            'latitude' => 50.8505, // Near project1 location
+            'longitude' => 4.3519,
+            'location_accuracy' => 15.5,
+            'location_captured_at' => now()->subHours(6),
+            'qr_code_scanned' => false,
+        ]);
+
+        // Entry with QR code scan + geolocation
+        TimeEntry::create([
+            'user_id' => $ouvrier2->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project2->id,
+            'start_time' => now()->subHours(4),
+            'end_time' => now()->subHours(1),
+            'description' => 'Pointage par QR code avec localisation',
+            'duration' => 10800, // 3 hours
+            'latitude' => 50.8468,
+            'longitude' => 4.3526,
+            'location_accuracy' => 10.2,
+            'location_captured_at' => now()->subHours(4),
+            'qr_code_scanned' => true,
+        ]);
+
+        // Entry with geolocation but outside geofence (for testing)
+        TimeEntry::create([
+            'user_id' => $ouvrier3->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project3->id,
+            'start_time' => now()->subHours(8),
+            'end_time' => now()->subHours(4),
+            'description' => 'Travaux hors périmètre (test géofencing)',
+            'duration' => 14400, // 4 hours
+            'latitude' => 51.2500, // Far from project3 location
+            'longitude' => 4.5000,
+            'location_accuracy' => 25.0,
+            'location_captured_at' => now()->subHours(8),
+            'qr_code_scanned' => false,
+        ]);
+
+        // Active entry with QR code (currently running)
+        TimeEntry::create([
+            'user_id' => $ouvrier4->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project4->id,
+            'start_time' => now()->subMinutes(45),
+            'end_time' => null,
+            'description' => 'Travaux en cours - pointé par QR code',
+            'latitude' => 51.0545,
+            'longitude' => 3.7176,
+            'location_accuracy' => 8.5,
+            'location_captured_at' => now()->subMinutes(45),
+            'qr_code_scanned' => true,
+        ]);
+
+        // Entry with very precise location
+        TimeEntry::create([
+            'user_id' => $ouvrier5->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project1->id,
+            'start_time' => now()->subDays(1)->setTime(7, 30),
+            'end_time' => now()->subDays(1)->setTime(16, 30),
+            'description' => 'Journée complète avec localisation précise',
+            'duration' => 32400, // 9 hours
+            'latitude' => 50.8504,
+            'longitude' => 4.3518,
+            'location_accuracy' => 5.0, // Very precise
+            'location_captured_at' => now()->subDays(1)->setTime(7, 30),
+            'qr_code_scanned' => true,
+        ]);
+
+        // Team leader entry with QR code
+        TimeEntry::create([
+            'user_id' => $teamLeader1->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project1->id,
+            'start_time' => now()->subHours(5),
+            'end_time' => now()->subHours(1),
+            'description' => 'Supervision équipe avec pointage QR',
+            'duration' => 14400, // 4 hours
+            'latitude' => 50.8502,
+            'longitude' => 4.3516,
+            'location_accuracy' => 12.0,
+            'location_captured_at' => now()->subHours(5),
+            'qr_code_scanned' => true,
+        ]);
+
+        // Responsable entry with location
+        TimeEntry::create([
+            'user_id' => $resp1->id,
+            'encoded_by_user_id' => null,
+            'project_id' => $project2->id,
+            'start_time' => now()->subHours(3),
+            'end_time' => now()->subMinutes(30),
+            'description' => 'Inspection chantier avec géolocalisation',
+            'duration' => 9000, // 2.5 hours
+            'latitude' => 50.8466,
+            'longitude' => 4.3524,
+            'location_accuracy' => 18.0,
+            'location_captured_at' => now()->subHours(3),
+            'qr_code_scanned' => false,
+        ]);
+
+        $this->command->info('✅ Database seeded successfully!');
+        $this->command->info('');
+        $this->command->info('📊 Created:');
+        $this->command->info('   - 3 Organizations (with geolocation settings)');
+        $this->command->info('   - 12 Users (2 admins, 3 responsables, 2 team leaders, 5 ouvriers)');
+        $this->command->info('   - 4 Projects (with GPS coordinates and QR codes)');
+        $this->command->info('   - ' . TimeEntry::count() . ' Time Entries (including geolocation and QR scans)');
+        $this->command->info('');
+        $this->command->info('🔐 Test credentials:');
+        $this->command->info('   Admin: admin@besttime.test / password');
+        $this->command->info('   Responsable: pierre.dubois@construction-abc.be / password');
+        $this->command->info('   Team Leader: marc.leroy@construction-abc.be / password');
+        $this->command->info('   Ouvrier: lucas.bernard@construction-abc.be / password');
+        $this->command->info('');
+        $this->command->info('📱 QR Codes generated for all projects!');
+        $this->command->info('   Use /api/admin/projects/{id}/qr-code to retrieve them');
     }
 }

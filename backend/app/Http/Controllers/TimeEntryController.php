@@ -25,8 +25,8 @@ class TimeEntryController extends Controller
         $query = TimeEntry::with(['user', 'project'])
             ->orderBy('start_time', 'desc');
 
-        // Admin can see all entries, employees only their own
-        if ($user->isEmployee()) {
+        // Admin can see all entries, others only their own
+        if (!$user->isAdmin()) {
             $query->where('user_id', $user->id);
         }
 
@@ -50,14 +50,24 @@ class TimeEntryController extends Controller
      */
     public function store(StoreTimeEntryRequest $request): JsonResponse
     {
-        $timeEntry = TimeEntry::create([
+        $data = [
             'user_id' => $request->user()->id,
             'project_id' => $request->project_id,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'description' => $request->description,
-        ]);
+            'qr_code_scanned' => $request->boolean('qr_code_scanned', false),
+        ];
 
+        // Add geolocation data if provided
+        if ($request->has('latitude') && $request->has('longitude')) {
+            $data['latitude'] = $request->latitude;
+            $data['longitude'] = $request->longitude;
+            $data['location_accuracy'] = $request->location_accuracy;
+            $data['location_captured_at'] = now();
+        }
+
+        $timeEntry = TimeEntry::create($data);
         $timeEntry->load(['user', 'project']);
 
         // Log the creation
@@ -73,8 +83,8 @@ class TimeEntryController extends Controller
     {
         $user = $request->user();
 
-        // Employees can only see their own entries
-        if ($user->isEmployee() && $timeEntry->user_id !== $user->id) {
+        // Non-admins can only see their own entries
+        if (!$user->isAdmin() && $timeEntry->user_id !== $user->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -90,8 +100,8 @@ class TimeEntryController extends Controller
     {
         $user = $request->user();
 
-        // Employees can only update their own entries
-        if ($user->isEmployee() && $timeEntry->user_id !== $user->id) {
+        // Non-admins can only update their own entries
+        if (!$user->isAdmin() && $timeEntry->user_id !== $user->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -112,8 +122,8 @@ class TimeEntryController extends Controller
     {
         $user = $request->user();
 
-        // Employees can only delete their own entries
-        if ($user->isEmployee() && $timeEntry->user_id !== $user->id) {
+        // Non-admins can only delete their own entries
+        if (!$user->isAdmin() && $timeEntry->user_id !== $user->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -144,17 +154,32 @@ class TimeEntryController extends Controller
             ], 409);
         }
 
-        $timeEntry = TimeEntry::create([
+        // Prepare time entry data
+        $data = [
             'user_id' => $user->id,
             'project_id' => $request->project_id,
             'start_time' => now(),
             'description' => $request->description,
-        ]);
+            'qr_code_scanned' => $request->boolean('qr_code_scanned', false),
+        ];
 
+        // Add geolocation data if provided
+        if ($request->has('latitude') && $request->has('longitude')) {
+            $data['latitude'] = $request->latitude;
+            $data['longitude'] = $request->longitude;
+            $data['location_accuracy'] = $request->location_accuracy;
+            $data['location_captured_at'] = now();
+        }
+
+        $timeEntry = TimeEntry::create($data);
         $timeEntry->load(['user', 'project']);
 
         // Log the clock in
-        ActivityLogService::log('clock_in', $timeEntry, null, null, "User clocked in: {$timeEntry->description}", $request);
+        $logMessage = "User clocked in: {$timeEntry->description}";
+        if ($timeEntry->qr_code_scanned) {
+            $logMessage .= ' (via QR code)';
+        }
+        ActivityLogService::log('clock_in', $timeEntry, null, null, $logMessage, $request);
 
         return response()->json(new TimeEntryResource($timeEntry), 201);
     }

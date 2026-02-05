@@ -39,8 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/time-entries/start', [TimeEntryController::class, 'start']);
     Route::post('/time-entries/stop', [TimeEntryController::class, 'stop']);
 
+    // QR Code validation (public for mobile app)
+    Route::post('/qr-codes/validate', [\App\Http\Controllers\QRCodeController::class, 'validate']);
+
     // Admin routes
-    Route::middleware(['can:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(\App\Http\Middleware\EnsureUserIsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
         // Users management
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
@@ -54,11 +57,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Logs
         Route::get('/logs/application', [LogController::class, 'getApplicationLogs']);
+        Route::delete('/logs/application', [LogController::class, 'clearApplicationLogs']);
         Route::get('/logs/activity', [LogController::class, 'getActivityLogs']);
         Route::get('/logs/statistics', [LogController::class, 'getLogStatistics']);
 
         // Projects management (extend existing routes)
         Route::put('/projects/{project}', [ProjectController::class, 'update']);
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+        
+        // QR Code generation for projects
+        Route::post('/projects/{project}/qr-code/generate', [\App\Http\Controllers\QRCodeController::class, 'generateToken']);
+        Route::get('/projects/{project}/qr-code', [\App\Http\Controllers\QRCodeController::class, 'getQRCode']);
     });
 });

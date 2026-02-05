@@ -1,0 +1,55 @@
+name: best_time_app
+description: "Best Time - Professional timesheet management application with QR code scanning and geolocation"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI
+  cupertino_icons: ^1.0.8
+  
+  # State Management
+  flutter_riverpod: ^2.5.1
+  
+  # HTTP & API
+  http: ^1.2.0
+  
+  # Storage
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.2
+  
+  # QR Code
+  qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.1.0
+  
+  # Geolocation
+  geolocator: ^11.0.0
+  permission_handler: ^11.2.0
+  
+  # Internationalization
+  intl: ^0.19.0
+  
+  # Network
+  connectivity_plus: ^5.0.2
+  
+  # Utils
+  logger: ^2.0.2+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # Assets
+  assets:
+    - assets/images/
+    - assets/icons/

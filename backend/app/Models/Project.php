@@ -21,6 +21,10 @@ class Project extends Model
         'name',
         'client',
         'status',
+        'latitude',
+        'longitude',
+        'geofence_radius',
+        'qr_code_token',
     ];
 
     /**

@@ -190,6 +190,12 @@
       "role": "Rôle",
       "createdAt": "Créé le",
       "passwordHint": "Laissez vide pour ne pas modifier",
+      "roles": {
+        "admin": "Administrateur",
+        "responsable": "Responsable",
+        "team_leader": "Chef d'équipe",
+        "ouvrier": "Ouvrier"
+      },
       "deleteConfirm": "Confirmer la suppression",
       "deleteMessage": "Êtes-vous sûr de vouloir supprimer l'utilisateur {name} ?"
     },
@@ -225,6 +231,12 @@
         "clockIn": "Pointage entrant",
         "clockOut": "Pointage sortant"
       }
+    },
+    "projects": {
+      "title": "Gestion des projets",
+      "subtitle": "Informations sur les chantiers et sites d'intervention",
+      "createButton": "Nouveau projet",
+      "searchPlaceholder": "Rechercher un projet ou client..."
     },
     "common": {
       "view": "Voir",

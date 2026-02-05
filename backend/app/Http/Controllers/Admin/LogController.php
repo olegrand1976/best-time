@@ -163,6 +163,21 @@ class LogController extends Controller
     }
 
     /**
+     * Clear application logs (truncate laravel.log).
+     */
+    public function clearApplicationLogs(): JsonResponse
+    {
+        $logPath = storage_path('logs/laravel.log');
+
+        if (File::exists($logPath)) {
+            File::put($logPath, '');
+            return response()->json(['message' => 'Logs cleared successfully.']);
+        }
+
+        return response()->json(['message' => 'Log file does not exist.'], 404);
+    }
+
+    /**
      * Extract log level from log line.
      */
     private function extractLogLevel(string $line): ?string

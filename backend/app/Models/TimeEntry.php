@@ -26,6 +26,11 @@ class TimeEntry extends Model
         'end_time',
         'description',
         'duration',
+        'latitude',
+        'longitude',
+        'location_accuracy',
+        'location_captured_at',
+        'qr_code_scanned',
     ];
 
     /**
@@ -38,6 +43,8 @@ class TimeEntry extends Model
         return [
             'start_time' => 'datetime',
             'end_time' => 'datetime',
+            'location_captured_at' => 'datetime',
+            'qr_code_scanned' => 'boolean',
         ];
     }
 

@@ -190,6 +190,12 @@
       "role": "Role",
       "createdAt": "Created at",
       "passwordHint": "Leave empty to keep current password",
+      "roles": {
+        "admin": "Administrator",
+        "responsable": "Manager",
+        "team_leader": "Team Leader",
+        "ouvrier": "Worker"
+      },
       "deleteConfirm": "Confirm deletion",
       "deleteMessage": "Are you sure you want to delete user {name}?"
     },
@@ -225,6 +231,12 @@
         "clockIn": "Clock in",
         "clockOut": "Clock out"
       }
+    },
+    "projects": {
+      "title": "Project Management",
+      "subtitle": "Information about sites and intervention locations",
+      "createButton": "New Project",
+      "searchPlaceholder": "Search project or client..."
     },
     "common": {
       "view": "View",

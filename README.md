@@ -1,56 +1,287 @@
-Agis en tant qu'architecte logiciel Senior Full Stack et expert DevOps. Je souhaite que tu m'aides à créer le squelette et les fonctionnalités de base d'une application de "Gestion de temps de prestation" (Time Tracking) pour ouvriers et employés.
+# Best Time - Gestion de temps professionnelle
 
-## 1. Stack Technique & Architecture
-Le projet doit suivre une architecture moderne, sécurisée et performante :
-- **Backend API :** Laravel 11 (API Only). Utilisation de Laravel Sanctum pour l'authentification.
-- **Frontend :** Nuxt 3 (Composition API, TypeScript).
-- **Base de données :** PostgreSQL.
-- **Cache & Queue :** Redis.
-- **Styling :** Tailwind CSS (via Nuxt UI ou Tailwind direct).
-- **Déploiement :** Docker & Docker Compose (environnement de développement local qui simule la prod).
+Application complète de gestion de temps avec **backend Laravel**, **frontend Nuxt 3**, et **application mobile Flutter**.
 
-## 2. Structure du Projet
-Je veux une structure "Monorepo" simulée dans le dossier racine :
-- `/backend` (Code Laravel)
-- `/frontend` (Code Nuxt)
-- `docker-compose.yml` (à la racine)
+## 🎯 Fonctionnalités
 
-## 3. Fonctionnalités Requises (MVP)
+- ✅ Authentification sécurisée avec rôles (Admin, Responsable, Team Leader, Ouvrier)
+- ✅ Pointage en temps réel (Clock-in/Clock-out)
+- ✅ Scan de QR Code pour pointage rapide
+- ✅ Géolocalisation automatique et géofencing
+- ✅ Dashboard avec résumé hebdomadaire
+- ✅ Gestion de projets et clients
+- ✅ Rapports et exports
+- ✅ Conforme à la directive européenne 2003/88/CE
 
-### A. Authentification & Rôles
-- Login / Logout / Forgot Password.
-- Deux rôles principaux :
-  1. **Admin :** Peut voir les temps de tout le monde, gérer les utilisateurs, exporter des rapports.
-  2. **Employé :** Ne peut voir que ses propres temps, pointer (Clock-in/Clock-out) ou saisir manuellement.
+## 📋 Stack Technique
 
-### B. Gestion du temps (Core)
-- **Pointage en direct :** Un bouton "Démarrer" / "Arrêter" qui enregistre l'heure précise.
-- **Saisie manuelle :** Possibilité d'ajouter une entrée passée (Date, Heure début, Heure fin, Description, Projet associé).
-- **Calcul automatique :** Durée totale par jour et par semaine.
+- **Backend:** Laravel 11 + PostgreSQL + Redis
+- **Frontend Web:** Nuxt 3 + TypeScript + Tailwind CSS
+- **Mobile:** Flutter 3.5+ (iOS & Android)
+- **Infrastructure:** Docker + Docker Compose
 
-### C. Dashboard
-- **Admin :** Vue globale des heures prestées aujourd'hui par tous les employés.
-- **Employé :** Récapitulatif de ses heures de la semaine et compteur en cours s'il a pointé.
+## 🚀 Démarrage rapide (Docker)
 
-## 4. Base de données (Schéma suggéré)
-Propose et implémente des migrations pour :
-- `users` (avec colonne role).
-- `projects` (nom, client, statut).
-- `time_entries` (user_id, project_id, start_time, end_time, description, duration).
+### 1. Prérequis
 
-## 5. Instructions Docker
-Le fichier `docker-compose.yml` doit orchestrer :
-- Un conteneur **PHP-FPM** (Laravel).
-- Un conteneur **Nginx** (Serveur web pour l'API et Proxy pour le front si nécessaire).
-- Un conteneur **Node.js** (pour le dev server Nuxt).
-- Un conteneur **PostgreSQL**.
-- Un conteneur **Redis**.
-- Assure-toi que les réseaux (networks) permettent la communication entre l'API et la BDD/Redis.
+- Docker et Docker Compose installés
+- Make (optionnel mais recommandé)
 
-## 6. Consignes de Code
-- **Laravel :** Utilise les API Resources pour les réponses JSON. Valide les entrées via FormRequests. Code propre et commenté.
-- **Nuxt :** Utilise Pinia pour le state management (auth store). Utilise `$fetch` ou `useFetch` avec un intercepteur pour gérer les tokens Bearer automatiquement.
-- **UI :** Interface propre, responsive (mobile-first pour les ouvriers sur chantier).
+### 2. Démarrer la stack complète
 
-## Action demandée
-Commence par me proposer l'arborescence des fichiers et le contenu du fichier `docker-compose.yml` complet pour initialiser l'environnement. Ensuite, guide-moi étape par étape pour l'installation de Laravel et Nuxt dans cet environnement Docker.
+```bash
+# Avec le script de démarrage (recommandé)
+./start-docker.sh
+
+# OU avec Make
+make start
+
+# OU manuellement
+docker-compose up -d
+```
+
+Le script va automatiquement:
+- Créer le fichier `.env` pour Laravel
+- Installer les dépendances Composer
+- Exécuter les migrations
+- Créer les utilisateurs de test
+- Afficher votre IP pour la configuration mobile
+
+### 3. Services disponibles
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **API Laravel** | http://localhost:8000 | Backend API |
+| **Frontend Nuxt** | http://localhost:3020 | Interface web |
+| **MailHog** | http://localhost:8025 | Emails de test |
+| **PostgreSQL** | localhost:5432 | Base de données |
+| **Redis** | localhost:6379 | Cache & queues |
+
+### 4. Identifiants de test
+
+- **Admin:** `admin@example.com` / `password`
+- **Employé:** `employee@example.com` / `password`
+
+## 📱 Application Mobile Flutter
+
+### Installation
+
+```bash
+cd flutter
+flutter pub get
+```
+
+### Configuration
+
+Modifier `flutter/lib/config/app_config.dart`:
+
+```dart
+// Pour émulateur
+static const String apiBaseUrl = 'http://localhost:8000/api';
+
+// Pour appareil physique (remplacer par votre IP)
+static const String apiBaseUrl = 'http://192.168.1.X:8000/api';
+```
+
+**Astuce:** Utilisez `make ip` pour afficher votre adresse IP.
+
+### Lancer l'application
+
+```bash
+# Avec Make
+make flutter-run
+
+# OU directement
+cd flutter
+flutter run
+```
+
+## 🛠️ Commandes utiles (Make)
+
+```bash
+make help              # Afficher toutes les commandes
+make start             # Démarrer la stack
+make stop              # Arrêter la stack
+make logs              # Voir les logs
+make shell             # Shell Laravel
+make migrate           # Exécuter les migrations
+make fresh             # Réinitialiser la DB
+make qr-generate       # Générer un QR code de test
+make ip                # Afficher l'IP pour mobile
+make health            # Vérifier la santé des services
+make backup-db         # Sauvegarder la base de données
+```
+
+Voir le [Makefile](Makefile) pour toutes les commandes disponibles.
+
+## 📚 Documentation
+
+- **[DOCKER.md](DOCKER.md)** - Guide complet Docker avec dépannage
+- **[flutter/README.md](flutter/README.md)** - Documentation de l'app mobile
+- **[CONFORMITE_REGLEMENTAIRE.md](CONFORMITE_REGLEMENTAIRE.md)** - Conformité européenne
+
+## 🏗️ Structure du projet
+
+```
+best-time-1/
+├── backend/              # API Laravel
+│   ├── app/
+│   ├── database/
+│   └── routes/
+├── frontend/             # Interface Nuxt 3
+│   ├── components/
+│   ├── pages/
+│   └── stores/
+├── flutter/              # Application mobile
+│   ├── lib/
+│   │   ├── config/
+│   │   ├── data/
+│   │   └── presentation/
+│   └── pubspec.yaml
+├── docker/               # Configuration Docker
+│   ├── nginx/
+│   └── php/
+├── scripts/              # Scripts utilitaires
+├── docker-compose.yml    # Orchestration Docker
+├── Makefile             # Commandes simplifiées
+└── start-docker.sh      # Script de démarrage
+```
+
+## 🔧 Développement
+
+### Backend (Laravel)
+
+```bash
+# Accéder au shell
+make shell
+
+# Exécuter des commandes Artisan
+docker-compose exec php-fpm php artisan route:list
+docker-compose exec php-fpm php artisan migrate
+docker-compose exec php-fpm php artisan test
+```
+
+### Frontend (Nuxt)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Mobile (Flutter)
+
+```bash
+cd flutter
+flutter pub get
+flutter run
+flutter test
+```
+
+## 📱 Test de l'application mobile
+
+### 1. Vérifier la connectivité
+
+Depuis votre appareil mobile, ouvrir le navigateur:
+```
+http://VOTRE_IP:8000/api/health
+```
+
+### 2. Générer un QR Code de test
+
+```bash
+make qr-generate
+```
+
+Ou manuellement:
+```bash
+./scripts/generate-qr.sh
+```
+
+### 3. Scanner le QR Code
+
+1. Ouvrir l'app Flutter
+2. Se connecter
+3. Cliquer sur "Scanner QR"
+4. Scanner le QR code généré
+5. Le pointage se fait automatiquement!
+
+## 🔒 Sécurité
+
+- Tokens JWT avec Laravel Sanctum
+- Stockage sécurisé (flutter_secure_storage)
+- Validation des entrées (FormRequests)
+- Protection CSRF
+- Rate limiting sur l'API
+- HTTPS recommandé en production
+
+## 🌍 Conformité RGPD
+
+L'application respecte la directive européenne 2003/88/CE:
+- ✅ Horodatage automatique et fiable
+- ✅ Traçabilité complète
+- ✅ Géolocalisation avec consentement
+- ✅ Données sécurisées
+
+Voir [CONFORMITE_REGLEMENTAIRE.md](CONFORMITE_REGLEMENTAIRE.md) pour plus de détails.
+
+## 🐛 Dépannage
+
+### L'API n'est pas accessible depuis le mobile
+
+```bash
+# Vérifier le firewall
+sudo ufw allow 8000
+
+# Vérifier l'IP
+make ip
+
+# Tester la connectivité
+curl http://VOTRE_IP:8000/api/health
+```
+
+### Erreur de migration
+
+```bash
+# Réinitialiser la base de données
+make fresh
+
+# Ou manuellement
+docker-compose exec php-fpm php artisan migrate:fresh --seed
+```
+
+### Problème de permissions
+
+```bash
+docker-compose exec php-fpm chown -R www-data:www-data /var/www/html/storage
+docker-compose exec php-fpm chmod -R 775 /var/www/html/storage
+```
+
+Voir [DOCKER.md](DOCKER.md) pour plus de solutions.
+
+## 📦 Déploiement en production
+
+1. Modifier `APP_ENV=production` dans `.env`
+2. Désactiver `APP_DEBUG=false`
+3. Configurer HTTPS avec certificats SSL
+4. Utiliser des secrets sécurisés
+5. Configurer des sauvegardes automatiques
+6. Mettre en place un monitoring
+
+## 🤝 Contribution
+
+Ce projet suit les conventions:
+- PSR-12 pour PHP
+- ESLint pour JavaScript/TypeScript
+- Dart style guide pour Flutter
+
+## 📄 Licence
+
+Propriétaire - Best Time © 2026
+
+## 🆘 Support
+
+Pour toute question:
+- Consulter la documentation dans `/docs`
+- Voir les guides [DOCKER.md](DOCKER.md) et [flutter/README.md](flutter/README.md)
+- Vérifier les issues GitHub

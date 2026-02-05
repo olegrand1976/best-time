@@ -114,7 +114,7 @@
                   type="email"
                   required
                   autocomplete="email"
-                  :placeholder="$t('auth.emailPlaceholder')"
+                  placeholder="votre@email.com"
                   size="lg"
                   icon="i-heroicons-envelope"
                   :ui="{
