@@ -77,8 +77,9 @@ export const useTimeEntryStore = defineStore('timeEntry', {
       const { apiFetch } = useApi()
 
       try {
-        const response = await apiFetch<Project[]>('/projects')
-        this.projects = response
+        const response = await apiFetch<any>('/projects')
+        // Handle both wrapped { data: [...] } and direct array responses
+        this.projects = Array.isArray(response) ? response : (response?.data || [])
         return this.projects
       } catch (error) {
         console.error('Error fetching projects:', error)
