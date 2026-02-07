@@ -46,6 +46,39 @@
             </UCard>
           </div>
 
+          <!-- Charts Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Daily Trend -->
+            <UCard class="col-span-1 lg:col-span-2">
+              <template #header>
+                <h3 class="text-lg font-semibold">Évolution des heures (7 derniers jours)</h3>
+              </template>
+              <ChartsDailyTrendChart v-if="stats.daily_trend?.length" :data="stats.daily_trend" />
+            </UCard>
+
+            <!-- Project Distribution -->
+            <UCard>
+              <template #header>
+                <h3 class="text-lg font-semibold">Répartition par projet (Aujourd'hui)</h3>
+              </template>
+              <ChartsProjectDistributionChart v-if="stats.project_stats?.length" :data="stats.project_stats" />
+              <div v-else class="h-64 flex items-center justify-center text-gray-500">
+                Pas de données aujourd'hui
+              </div>
+            </UCard>
+
+            <!-- Team Workload -->
+            <UCard>
+              <template #header>
+                <h3 class="text-lg font-semibold">Charge de travail (Aujourd'hui)</h3>
+              </template>
+              <ChartsTeamWorkloadChart v-if="stats.team_stats?.length" :data="stats.team_stats" />
+              <div v-else class="h-64 flex items-center justify-center text-gray-500">
+                Pas de données aujourd'hui
+              </div>
+            </UCard>
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- My Clocking -->
             <UCard>

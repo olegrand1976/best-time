@@ -193,6 +193,32 @@ class DashboardController extends Controller
                 ];
             })->values();
 
+        // Daily trend for the last 7 days (Team)
+        $dailyTrend = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dailyTrend->put($date, 0);
+        }
+
+        $trendEntries = TimeEntry::whereIn('user_id', $teamIds)
+            ->whereBetween('start_time', [now()->subDays(6)->startOfDay(), now()->endOfDay()])
+            ->whereNotNull('end_time')
+            ->select(DB::raw('DATE(start_time) as date'), DB::raw('SUM(duration) as total_seconds'))
+            ->groupBy('date')
+            ->get();
+
+        $trendEntries->each(function ($entry) use ($dailyTrend) {
+            $dailyTrend->put($entry->date, round($entry->total_seconds / 3600, 2));
+        });
+
+        $formattedTrend = $dailyTrend->map(function ($hours, $date) {
+            return [
+                'date' => $date,
+                'hours' => $hours,
+                'label' => \Carbon\Carbon::parse($date)->isoFormat('dd D'),
+            ];
+        })->values();
+
         return response()->json([
             'role' => 'responsable',
             'projects' => $projects,
@@ -204,6 +230,7 @@ class DashboardController extends Controller
             'team_today_hours' => $teamTodayHours,
             'team_count' => count($teamIds),
             'project_stats' => $projectStats,
+            'daily_trend' => $formattedTrend,
         ]);
     }
 
