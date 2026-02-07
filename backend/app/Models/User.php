@@ -135,6 +135,32 @@ class User extends Authenticatable
     }
 
     /**
+     * Get gestionnaires managed by this responsable.
+     */
+    public function managedGestionnaires(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'responsable_gestionnaires',
+            'responsable_id',
+            'gestionnaire_id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Get the responsable managing this gestionnaire.
+     */
+    public function myResponsable(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'responsable_gestionnaires',
+            'gestionnaire_id',
+            'responsable_id'
+        )->withTimestamps();
+    }
+
+    /**
      * Check if user is admin.
      */
     public function isAdmin(): bool
@@ -148,6 +174,14 @@ class User extends Authenticatable
     public function isResponsable(): bool
     {
         return $this->role === 'responsable';
+    }
+
+    /**
+     * Check if user is gestionnaire.
+     */
+    public function isGestionnaire(): bool
+    {
+        return $this->role === 'gestionnaire';
     }
 
     /**
@@ -167,11 +201,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user can point (admin, responsable, ouvrier, team_leader can all point).
+     * Check if user can point (admin, responsable, gestionnaire, ouvrier, team_leader can all point).
      */
     public function canPoint(): bool
     {
-        return in_array($this->role, ['admin', 'responsable', 'ouvrier', 'team_leader']);
+        return in_array($this->role, ['admin', 'responsable', 'gestionnaire', 'ouvrier', 'team_leader']);
     }
 
     /**

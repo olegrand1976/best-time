@@ -166,6 +166,7 @@
       "dashboard": "Tableau de bord",
       "users": "Utilisateurs",
       "projects": "Projets",
+      "clients": "Clients",
       "statistics": "Statistiques",
       "settings": "Paramètres",
       "logs": "Logs",
@@ -193,6 +194,7 @@
       "roles": {
         "admin": "Administrateur",
         "responsable": "Responsable",
+        "gestionnaire": "Gestionnaire",
         "team_leader": "Chef d'équipe",
         "ouvrier": "Ouvrier"
       },
@@ -237,6 +239,18 @@
       "subtitle": "Informations sur les chantiers et sites d'intervention",
       "createButton": "Nouveau projet",
       "searchPlaceholder": "Rechercher un projet ou client..."
+    },
+    "statistics": {
+      "title": "Statistiques",
+      "subtitle": "Vue d'ensemble de l'activité et des performances",
+      "totalHours": "Total Heures",
+      "avgPerDay": "Moyenne / Jour",
+      "totalEntries": "Pointages",
+      "byProject": "Répartition par Projet",
+      "topEmployees": "Top Employés",
+      "exportCsv": "Exporter CSV",
+      "from": "Du",
+      "to": "Au"
     },
     "common": {
       "view": "Voir",

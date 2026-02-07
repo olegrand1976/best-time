@@ -19,7 +19,7 @@ class DashboardController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-
+        
         if ($user->isAdmin()) {
             return $this->adminDashboard();
         }

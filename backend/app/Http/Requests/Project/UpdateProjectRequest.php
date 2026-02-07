@@ -26,6 +26,7 @@ class UpdateProjectRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'client' => ['nullable', 'string', 'max:255'],
+            'client_id' => ['nullable', 'exists:clients,id'],
             'status' => ['sometimes', 'string', 'in:active,archived'],
         ];
     }

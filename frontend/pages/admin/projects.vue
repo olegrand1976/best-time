@@ -5,10 +5,7 @@
         <h1 class="text-2xl font-bold text-gray-900">{{ $t('admin.projects.title') }}</h1>
         <p class="text-gray-600 mt-1">{{ $t('admin.projects.subtitle') }}</p>
       </div>
-      <UButton
-        icon="i-heroicons-plus"
-        @click="showCreateModal = true"
-      >
+      <UButton icon="i-heroicons-plus" @click="openCreateModal">
         {{ $t('admin.projects.createButton') }}
       </UButton>
     </div>
@@ -17,30 +14,18 @@
     <UCard class="mb-6">
       <div class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
-          <UInput
-            v-model="search"
-            icon="i-heroicons-magnifying-glass"
-            :placeholder="$t('admin.projects.searchPlaceholder')"
-            @update:model-value="loadProjects"
-          />
+          <UInput v-model="search" icon="i-heroicons-magnifying-glass"
+            :placeholder="$t('admin.projects.searchPlaceholder')" @update:model-value="loadProjects" />
         </div>
         <div class="w-full md:w-48">
-          <USelect
-            v-model="statusFilter"
-            :options="statusOptions"
-            @update:model-value="loadProjects"
-          />
+          <USelect v-model="statusFilter" :options="statusOptions" @update:model-value="loadProjects" />
         </div>
       </div>
     </UCard>
 
     <!-- Projects Table -->
     <UCard>
-      <UTable
-        :loading="loading"
-        :rows="projects"
-        :columns="columns"
-      >
+      <UTable :loading="loading" :rows="projects" :columns="columns">
         <template #status-data="{ row }">
           <UBadge :color="row.status === 'active' ? 'green' : 'gray'">
             {{ row.status === 'active' ? 'Actif' : 'Archivé' }}
@@ -49,28 +34,10 @@
 
         <template #actions-data="{ row }">
           <div class="flex space-x-2">
-            <UButton
-              icon="i-heroicons-qr-code"
-              color="indigo"
-              variant="soft"
-              size="xs"
-              @click="downloadQR(row)"
-              title="QR Code"
-            />
-            <UButton
-              icon="i-heroicons-pencil-square"
-              color="blue"
-              variant="soft"
-              size="xs"
-              @click="editProject(row)"
-            />
-            <UButton
-              icon="i-heroicons-trash"
-              color="red"
-              variant="soft"
-              size="xs"
-              @click="confirmDelete(row)"
-            />
+            <UButton icon="i-heroicons-qr-code" color="indigo" variant="soft" size="xs" @click="downloadQR(row)"
+              title="QR Code" />
+            <UButton icon="i-heroicons-pencil-square" color="blue" variant="soft" size="xs" @click="editProject(row)" />
+            <UButton icon="i-heroicons-trash" color="red" variant="soft" size="xs" @click="confirmDelete(row)" />
           </div>
         </template>
       </UTable>
@@ -91,17 +58,17 @@
             <UInput v-model="form.name" placeholder="Ex: Rénovation Façade" />
           </UFormGroup>
           <UFormGroup label="Client" required>
-            <UInput v-model="form.client" placeholder="Ex: Syndic Copropriété" />
+            <USelect v-model="form.client_id as any" :options="clientOptions" placeholder="Sélectionner un client" />
           </UFormGroup>
           <UFormGroup label="Description">
             <UTextarea v-model="form.description" />
           </UFormGroup>
           <div class="grid grid-cols-2 gap-4">
             <UFormGroup label="Latitude">
-              <UInput v-model="form.latitude" type="number" step="any" />
+              <UInput v-model="form.latitude as any" type="number" step="any" />
             </UFormGroup>
             <UFormGroup label="Longitude">
-              <UInput v-model="form.longitude" type="number" step="any" />
+              <UInput v-model="form.longitude as any" type="number" step="any" />
             </UFormGroup>
           </div>
           <UFormGroup label="Statut">
@@ -130,8 +97,24 @@ const saving = ref(false)
 const showModal = ref(false)
 const search = ref('')
 const statusFilter = ref('active')
-const projects = ref([])
-const editingProject = ref(null)
+interface Project {
+  id: number
+  name: string
+  client: string
+  description?: string
+  status: 'active' | 'archived'
+  latitude?: number | null
+  longitude?: number | null
+}
+
+const projects = ref<Project[]>([])
+const clients = ref<any[]>([])
+const editingProject = ref<Project | null>(null)
+
+const clientOptions = computed(() => [
+  { label: 'Aucun client', value: null },
+  ...clients.value.map(c => ({ label: c.name, value: c.id }))
+])
 
 const statusOptions = [
   { label: 'Tous les statuts', value: '' },
@@ -146,9 +129,9 @@ const columns = [
   { key: 'actions', label: 'Actions' },
 ]
 
-const form = ref({
+const form = ref<Partial<Project & { client_id: number | null }>>({
   name: '',
-  client: '',
+  client_id: null,
   description: '',
   status: 'active',
   latitude: null,
@@ -158,21 +141,22 @@ const form = ref({
 const loadProjects = async () => {
   loading.value = true
   try {
-    const authStore = useAuthStore()
-    const config = useRuntimeConfig()
-    
-    // Using filtered projects if backend supports search/status
-    const response = await $fetch(`${config.public.apiUrl}/projects`, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    })
-    
+    const { apiFetch } = useApi()
+
+    // Fetch clients first
+    const clientResponse = await apiFetch<any>('/clients')
+    clients.value = clientResponse.data || clientResponse || []
+
+    // Then projects
+    const response = await apiFetch<any>('/projects')
+
     // Simple frontend filtering for now if backend doesn't support it
-    let data = response.data || []
+    let data = (response.data || response || []) as Project[]
     if (search.value) {
-      data = data.filter(p => p.name.toLowerCase().includes(search.value.toLowerCase()) || p.client.toLowerCase().includes(search.value.toLowerCase()))
+      data = data.filter((p: Project) => p.name.toLowerCase().includes(search.value.toLowerCase()) || p.client.toLowerCase().includes(search.value.toLowerCase()))
     }
     if (statusFilter.value) {
-      data = data.filter(p => p.status === statusFilter.value)
+      data = data.filter((p: Project) => p.status === statusFilter.value)
     }
     projects.value = data
   } catch (error) {
@@ -182,7 +166,20 @@ const loadProjects = async () => {
   }
 }
 
-const editProject = (project) => {
+const openCreateModal = () => {
+  editingProject.value = null
+  form.value = {
+    name: '',
+    client: '',
+    description: '',
+    status: 'active',
+    latitude: null,
+    longitude: null,
+  }
+  showModal.value = true
+}
+
+const editProject = (project: Project) => {
   editingProject.value = project
   form.value = { ...project }
   showModal.value = true
@@ -191,18 +188,16 @@ const editProject = (project) => {
 const saveProject = async () => {
   saving.value = true
   try {
-    const authStore = useAuthStore()
-    const config = useRuntimeConfig()
-    const url = editingProject.value 
-      ? `${config.public.apiUrl}/admin/projects/${editingProject.value.id}`
-      : `${config.public.apiUrl}/projects`
-    
-    await $fetch(url, {
+    const { apiFetch } = useApi()
+    const endpoint = editingProject.value
+      ? `/admin/projects/${editingProject.value.id}`
+      : '/projects'
+
+    await apiFetch(endpoint, {
       method: editingProject.value ? 'PUT' : 'POST',
-      headers: { Authorization: `Bearer ${authStore.token}` },
       body: form.value
     })
-    
+
     showModal.value = false
     loadProjects()
   } catch (error) {
@@ -212,28 +207,24 @@ const saveProject = async () => {
   }
 }
 
-const downloadQR = async (project) => {
-  const authStore = useAuthStore()
-  const config = useRuntimeConfig()
+const downloadQR = (project: Project) => {
   try {
-    const response = await $fetch(`${config.public.apiUrl}/admin/projects/${project.id}/qr-code`, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
+    const { apiFetch } = useApi()
+    apiFetch<any>(`/admin/projects/${project.id}/qr-code`).then(response => {
+      // In a real app, this would trigger a download of the QR image
+      alert(`QR Code Token: ${response.qr_code_token}\nURL: ${response.qr_code_url}`)
     })
-    // In a real app, this would trigger a download of the QR image
-    alert(`QR Code Token: ${response.qr_code_token}\nURL: ${response.qr_code_url}`)
   } catch (error) {
     console.error('Error getting QR code:', error)
   }
 }
 
-const confirmDelete = async (project) => {
+const confirmDelete = async (project: Project) => {
   if (confirm(`Supprimer le projet ${project.name} ?`)) {
     try {
-      const authStore = useAuthStore()
-      const config = useRuntimeConfig()
-      await $fetch(`${config.public.apiUrl}/admin/projects/${project.id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${authStore.token}` }
+      const { apiFetch } = useApi()
+      await apiFetch(`/admin/projects/${project.id}`, {
+        method: 'DELETE'
       })
       loadProjects()
     } catch (error) {

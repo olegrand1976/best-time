@@ -7,7 +7,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProjectResource extends JsonResource
+class ClientResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,13 +19,11 @@ class ProjectResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'client' => $this->client,
-            'client_id' => $this->client_id,
-            'status' => $this->status,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'geofence_radius' => $this->geofence_radius,
-            'qr_code_token' => $this->qr_code_token,
+            'contact_person' => $this->contact_person,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'address' => $this->address,
+            'is_active' => $this->is_active,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

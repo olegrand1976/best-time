@@ -9,11 +9,14 @@
         <UCard class="mb-6">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1 grid grid-cols-2 gap-4">
-                    <UInput v-model="startDate" type="date" label="Du" @update:model-value="loadStats" />
-                    <UInput v-model="endDate" type="date" label="Au" @update:model-value="loadStats" />
+                    <UInput v-model="startDate" type="date" :label="$t('admin.statistics.from')"
+                        @update:model-value="loadStats" />
+                    <UInput v-model="endDate" type="date" :label="$t('admin.statistics.to')"
+                        @update:model-value="loadStats" />
                 </div>
                 <div class="flex items-end space-x-2">
-                    <UButton icon="i-heroicons-arrow-down-tray" variant="soft" @click="exportData">Exporter CSV
+                    <UButton icon="i-heroicons-arrow-down-tray" variant="soft" @click="exportData">{{
+                        $t('admin.statistics.exportCsv') }}
                     </UButton>
                     <UButton icon="i-heroicons-arrow-path" color="gray" variant="ghost" @click="loadStats"
                         :loading="loading" />
@@ -30,19 +33,22 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <UCard>
                     <div class="text-center p-4">
-                        <p class="text-sm text-gray-500 uppercase font-semibold">Total Heures</p>
+                        <p class="text-sm text-gray-500 uppercase font-semibold">{{ $t('admin.statistics.totalHours') }}
+                        </p>
                         <p class="text-3xl font-bold text-blue-600 mt-1">{{ summary.total_hours || 0 }}h</p>
                     </div>
                 </UCard>
                 <UCard>
                     <div class="text-center p-4">
-                        <p class="text-sm text-gray-500 uppercase font-semibold">Moyenne / Jour</p>
+                        <p class="text-sm text-gray-500 uppercase font-semibold">{{ $t('admin.statistics.avgPerDay') }}
+                        </p>
                         <p class="text-3xl font-bold text-indigo-600 mt-1">{{ summary.avg_per_day || 0 }}h</p>
                     </div>
                 </UCard>
                 <UCard>
                     <div class="text-center p-4">
-                        <p class="text-sm text-gray-500 uppercase font-semibold">Pointages</p>
+                        <p class="text-sm text-gray-500 uppercase font-semibold">{{ $t('admin.statistics.totalEntries')
+                            }}</p>
                         <p class="text-3xl font-bold text-green-600 mt-1">{{ summary.total_entries || 0 }}</p>
                     </div>
                 </UCard>
@@ -52,7 +58,7 @@
                 <!-- Chart 1: Hours per Project -->
                 <UCard>
                     <template #header>
-                        <h3 class="font-semibold">Répartition par Projet</h3>
+                        <h3 class="font-semibold">{{ $t('admin.statistics.byProject') }}</h3>
                     </template>
                     <div class="h-64 flex flex-col justify-end space-y-4">
                         <div v-for="item in projectStats" :key="item.name" class="relative">
@@ -62,13 +68,16 @@
                             </div>
                             <UMeter :value="item.hours" :max="summary.total_hours" color="blue" />
                         </div>
+                        <div v-if="projectStats.length === 0" class="text-center text-gray-500 py-8">
+                            Aucune donnée disponible
+                        </div>
                     </div>
                 </UCard>
 
                 <!-- List: Top Employees -->
                 <UCard>
                     <template #header>
-                        <h3 class="font-semibold">Top Employés</h3>
+                        <h3 class="font-semibold">{{ $t('admin.statistics.topEmployees') }}</h3>
                     </template>
                     <div class="space-y-4">
                         <div v-for="emp in employeeStats" :key="emp.name" class="flex items-center justify-between">
@@ -77,6 +86,9 @@
                                 <span class="text-sm">{{ emp.name }}</span>
                             </div>
                             <span class="text-sm font-semibold">{{ emp.hours }}h</span>
+                        </div>
+                        <div v-if="employeeStats.length === 0" class="text-center text-gray-500 py-8">
+                            Aucune donnée disponible
                         </div>
                     </div>
                 </UCard>
@@ -123,15 +135,36 @@ const loadStats = async () => {
     try {
         const authStore = useAuthStore()
         const config = useRuntimeConfig()
-        const response = await $fetch(`${config.public.apiUrl}/admin/statistics?start_date=${startDate.value}&end_date=${endDate.value}`, {
+
+        if (!authStore.token) {
+            console.warn('No auth token available')
+            useToast().add({
+                title: 'Non authentifié',
+                description: 'Veuillez vous reconnecter',
+                color: 'red'
+            })
+            return
+        }
+
+        const url = `${config.public.apiUrl}/admin/statistics?start_date=${startDate.value}&end_date=${endDate.value}`
+        console.log('Fetching statistics from:', url)
+
+        const response = await $fetch(url, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         }) as any
+
+        console.log('Statistics response:', response)
 
         summary.value = response.summary || { total_hours: 0, avg_per_day: 0, total_entries: 0 }
         projectStats.value = response.by_project || []
         employeeStats.value = response.by_employee || []
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error loading statistics:', error)
+        useToast().add({
+            title: 'Erreur de chargement',
+            description: error?.data?.message || error?.message || 'Impossible de charger les statistiques',
+            color: 'red'
+        })
     } finally {
         loading.value = false
     }

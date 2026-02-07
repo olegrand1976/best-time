@@ -11,9 +11,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (!authStore.isAuthenticated) {
     // Try to verify token with backend
     const user = await checkAuth()
-    
+
     if (!user) {
-      return navigateTo('/')
+      return navigateTo('/login')
     }
   }
 })

@@ -15,23 +15,17 @@ use Illuminate\Support\Facades\DB;
 class StatisticsController extends Controller
 {
     /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!$request->user() || !$request->user()->isAdmin()) {
-                return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
-            }
-            return $next($request);
-        });
-    }
-
-    /**
      * Get general statistics.
+     * Access: Admin + Responsable only
      */
     public function index(Request $request): JsonResponse
     {
+        // Authorization check
+        $user = $request->user();
+        if (!$user || (!$user->isAdmin() && $user->role !== 'responsable')) {
+            return response()->json(['message' => 'Unauthorized. Admin or Responsable access required.'], 403);
+        }
+
         $startDate = $request->input('start_date', now()->startOfMonth()->toDateString());
         $endDate = $request->input('end_date', now()->endOfMonth()->toDateString());
 

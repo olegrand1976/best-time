@@ -2,18 +2,13 @@ export const useAuth = () => {
   const authStore = useAuthStore()
 
   const login = async (email: string, password: string) => {
-    const config = useRuntimeConfig()
     const { apiFetch } = useApi()
 
     try {
-      const response = await $fetch<{ user: any; token: string }>(
-        `${config.public.apiUrl}/auth/login`,
+      const response = await apiFetch<{ user: any; token: string }>(
+        '/auth/login',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
           body: {
             email,
             password,
@@ -30,18 +25,16 @@ export const useAuth = () => {
   }
 
   const logout = async () => {
-    const config = useRuntimeConfig()
     const { apiFetch } = useApi()
 
     try {
-      await apiFetch(`${config.public.apiUrl}/auth/logout`, {
+      await apiFetch('/auth/logout', {
         method: 'POST',
       })
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
       authStore.logout()
-      await navigateTo('/login')
     }
   }
 
@@ -66,6 +59,8 @@ export const useAuth = () => {
     isAuthenticated: computed(() => authStore.isAuthenticated),
     user: computed(() => authStore.user),
     isAdmin: computed(() => authStore.isAdmin),
+    isResponsable: computed(() => authStore.isResponsable),
+    isManager: computed(() => authStore.isManager),
     isEmployee: computed(() => authStore.isEmployee),
   }
 }

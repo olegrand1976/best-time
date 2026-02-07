@@ -4,7 +4,7 @@ interface User {
   id: number
   name: string
   email: string
-  role: 'admin' | 'responsable' | 'team_leader' | 'ouvrier' | 'employee'
+  role: 'admin' | 'responsable' | 'gestionnaire' | 'team_leader' | 'ouvrier' | 'employee'
 }
 
 interface AuthState {
@@ -22,7 +22,9 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAdmin: (state): boolean => state.user?.role === 'admin',
-    isManager: (state): boolean => ['admin', 'responsable', 'team_leader'].includes(state.user?.role || ''),
+    isResponsable: (state): boolean => state.user?.role === 'responsable',
+    isManager: (state): boolean => ['admin', 'responsable', 'gestionnaire', 'team_leader'].includes(state.user?.role || ''),
+    isGestionnaire: (state): boolean => state.user?.role === 'gestionnaire',
     isEmployee: (state): boolean => ['ouvrier', 'employee'].includes(state.user?.role || ''),
   },
 
@@ -32,11 +34,11 @@ export const useAuthStore = defineStore('auth', {
       this.token = token
       this.isAuthenticated = true
 
-      // Store token in localStorage
-      if (process.client) {
-        localStorage.setItem('auth_token', token)
-        localStorage.setItem('auth_user', JSON.stringify(user))
-      }
+      // Store in cookies with global path for SSR and cross-route consistency
+      const tokenCookie = useCookie<string | null>('auth_token', { maxAge: 60 * 60 * 24 * 7, path: '/' })
+      const userCookie = useCookie<User | null>('auth_user', { maxAge: 60 * 60 * 24 * 7, path: '/' })
+      tokenCookie.value = token
+      userCookie.value = user // useCookie handles serialization automatically
     },
 
     logout() {
@@ -44,24 +46,25 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.isAuthenticated = false
 
-      if (process.client) {
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('auth_user')
-      }
+      // Clear cookies with exact same path options
+      const tokenCookie = useCookie<string | null>('auth_token', { path: '/' })
+      const userCookie = useCookie<User | null>('auth_user', { path: '/' })
+      tokenCookie.value = null
+      userCookie.value = null
     },
 
     initAuth() {
-      if (process.client) {
-        const token = localStorage.getItem('auth_token')
-        const userStr = localStorage.getItem('auth_user')
+      const tokenCookie = useCookie<string | null>('auth_token', { path: '/' })
+      const userCookie = useCookie<User | null>('auth_user', { path: '/' })
 
-        if (token && userStr) {
-          try {
-            const user = JSON.parse(userStr)
-            this.setAuth(user, token)
-          } catch (e) {
-            this.logout()
-          }
+      if (tokenCookie.value && userCookie.value) {
+        try {
+          // useCookie handles de-serialization automatically
+          this.user = userCookie.value
+          this.token = tokenCookie.value
+          this.isAuthenticated = true
+        } catch (e) {
+          this.logout()
         }
       }
     },

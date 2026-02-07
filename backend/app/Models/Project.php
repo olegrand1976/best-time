@@ -19,6 +19,7 @@ class Project extends Model
      */
     protected $fillable = [
         'name',
+        'client_id',
         'client',
         'status',
         'latitude',
@@ -26,6 +27,14 @@ class Project extends Model
         'geofence_radius',
         'qr_code_token',
     ];
+
+    /**
+     * Get the client that owns the project.
+     */
+    public function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
 
     /**
      * Get the time entries for the project.

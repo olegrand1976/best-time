@@ -37,17 +37,11 @@ export const useTimeEntryStore = defineStore('timeEntry', {
 
   actions: {
     async fetchActiveEntry() {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
 
       try {
-        const response = await $fetch<any>(`${config.public.apiUrl}/dashboard`, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        })
-
-        this.activeEntry = response.active_entry || null
+        const response = await apiFetch<any>('/dashboard')
+        this.activeEntry = response?.active_entry || null
         return this.activeEntry
       } catch (error) {
         console.error('Error fetching active entry:', error)
@@ -57,8 +51,7 @@ export const useTimeEntryStore = defineStore('timeEntry', {
     },
 
     async fetchEntries(params?: { date?: string; week?: boolean }) {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
       this.loading = true
 
       try {
@@ -66,15 +59,10 @@ export const useTimeEntryStore = defineStore('timeEntry', {
         if (params?.date) queryParams.append('date', params.date)
         if (params?.week) queryParams.append('week', 'true')
 
-        const url = `${config.public.apiUrl}/time-entries${queryParams.toString() ? `?${queryParams}` : ''}`
-        
-        const response = await $fetch<any>(url, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        })
+        const endpoint = `/time-entries${queryParams.toString() ? `?${queryParams}` : ''}`
+        const response = await apiFetch<any>(endpoint)
 
-        this.entries = response.data || []
+        this.entries = response?.data || []
         return this.entries
       } catch (error) {
         console.error('Error fetching entries:', error)
@@ -86,16 +74,10 @@ export const useTimeEntryStore = defineStore('timeEntry', {
     },
 
     async fetchProjects() {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
 
       try {
-        const response = await $fetch<Project[]>(`${config.public.apiUrl}/projects`, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        })
-
+        const response = await apiFetch<Project[]>('/projects')
         this.projects = response
         return this.projects
       } catch (error) {
@@ -106,15 +88,11 @@ export const useTimeEntryStore = defineStore('timeEntry', {
     },
 
     async startEntry(projectId?: number, description?: string) {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
 
       try {
-        const response = await $fetch<TimeEntry>(`${config.public.apiUrl}/time-entries/start`, {
+        const response = await apiFetch<TimeEntry>('/time-entries/start', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
           body: {
             project_id: projectId || null,
             description: description || null,
@@ -130,15 +108,11 @@ export const useTimeEntryStore = defineStore('timeEntry', {
     },
 
     async stopEntry() {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
 
       try {
-        const response = await $fetch<TimeEntry>(`${config.public.apiUrl}/time-entries/stop`, {
+        const response = await apiFetch<TimeEntry>('/time-entries/stop', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
         })
 
         this.activeEntry = null
@@ -156,15 +130,11 @@ export const useTimeEntryStore = defineStore('timeEntry', {
       end_time: string
       description?: string
     }) {
-      const config = useRuntimeConfig()
-      const authStore = useAuthStore()
+      const { apiFetch } = useApi()
 
       try {
-        const response = await $fetch<TimeEntry>(`${config.public.apiUrl}/time-entries`, {
+        const response = await apiFetch<TimeEntry>('/time-entries', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
           body: data,
         })
 

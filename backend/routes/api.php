@@ -6,13 +6,14 @@ use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TimeEntryController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,6 +29,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects/{project}', [ProjectController::class, 'show']);
     Route::post('/projects', [ProjectController::class, 'store'])->middleware('can:create,App\Models\Project');
 
+    // Clients
+    Route::get('/clients', [ClientController::class, 'index']);
+    Route::post('/clients', [ClientController::class, 'store']);
+    Route::get('/clients/{client}', [ClientController::class, 'show']);
+    Route::put('/clients/{client}', [ClientController::class, 'update']);
+    Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
+
     // Time Entries
     Route::get('/time-entries', [TimeEntryController::class, 'index']);
     Route::post('/time-entries', [TimeEntryController::class, 'store']);
@@ -41,6 +49,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // QR Code validation (public for mobile app)
     Route::post('/qr-codes/validate', [\App\Http\Controllers\QRCodeController::class, 'validate']);
+
+    // Team management (Responsable manages Gestionnaires)
+    Route::prefix('team')->group(function () {
+        Route::get('/', [\App\Http\Controllers\TeamController::class, 'index']);
+        Route::get('/available', [\App\Http\Controllers\TeamController::class, 'available']);
+        Route::post('/{user}', [\App\Http\Controllers\TeamController::class, 'attach']);
+        Route::delete('/{user}', [\App\Http\Controllers\TeamController::class, 'detach']);
+    });
 
     // Admin routes
     Route::middleware(\App\Http\Middleware\EnsureUserIsAdmin::class)->prefix('admin')->name('admin.')->group(function () {

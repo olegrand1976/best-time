@@ -37,7 +37,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($userId),
             ],
             'password' => ['sometimes', 'nullable', 'string', 'min:8'],
-            'role' => ['sometimes', 'string', Rule::in(['admin', 'responsable', 'team_leader', 'ouvrier'])],
+            'role' => ['sometimes', 'string', Rule::in(['admin', 'responsable', 'gestionnaire', 'team_leader', 'ouvrier'])],
         ];
     }
 }

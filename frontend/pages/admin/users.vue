@@ -13,18 +13,10 @@
     <!-- Search and Filters -->
     <UCard class="mb-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <UInput
-          v-model="searchQuery"
-          :placeholder="$t('admin.users.searchPlaceholder')"
-          icon="i-heroicons-magnifying-glass"
-          @input="loadUsers"
-        />
-        <USelect
-          v-model="roleFilter"
-          :options="roleOptions"
-          :placeholder="$t('admin.users.filterByRole')"
-          @change="loadUsers"
-        />
+        <UInput v-model="searchQuery" :placeholder="$t('admin.users.searchPlaceholder')"
+          icon="i-heroicons-magnifying-glass" @input="loadUsers" />
+        <USelect v-model="roleFilter" :options="roleOptions" :placeholder="$t('admin.users.filterByRole')"
+          @change="loadUsers" />
       </div>
     </UCard>
 
@@ -34,11 +26,7 @@
         <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-400" />
       </div>
 
-      <UTable
-        v-else-if="users.length > 0"
-        :rows="users"
-        :columns="columns"
-      >
+      <UTable v-else-if="users.length > 0" :rows="users" :columns="columns">
         <template #role-data="{ row }">
           <UBadge :color="getRoleColor(row.role)">
             {{ $t(`admin.users.roles.${row.role}`) }}
@@ -47,26 +35,13 @@
 
         <template #actions-data="{ row }">
           <div class="flex space-x-2">
-            <UButton
-              size="sm"
-              variant="ghost"
-              @click="viewUser(row)"
-            >
+            <UButton size="sm" variant="ghost" @click="viewUser(row)">
               {{ $t('common.view') }}
             </UButton>
-            <UButton
-              size="sm"
-              variant="ghost"
-              @click="editUser(row)"
-            >
+            <UButton size="sm" variant="ghost" @click="editUser(row)">
               {{ $t('common.edit') }}
             </UButton>
-            <UButton
-              size="sm"
-              variant="ghost"
-              color="red"
-              @click="confirmDelete(row)"
-            >
+            <UButton size="sm" variant="ghost" color="red" @click="confirmDelete(row)">
               {{ $t('common.delete') }}
             </UButton>
           </div>
@@ -79,13 +54,10 @@
     </UCard>
 
     <!-- Create/Edit Modal -->
-    <UModal v-model="showCreateModal" :title="editingUser ? $t('admin.users.editTitle') : $t('admin.users.createTitle')">
+    <UModal v-model="showCreateModal"
+      :title="editingUser ? $t('admin.users.editTitle') : $t('admin.users.createTitle')">
       <div v-if="showCreateModal">
-        <UserForm
-          :user="editingUser"
-          @saved="handleUserSaved"
-          @cancel="showCreateModal = false"
-        />
+        <UserForm :user="editingUser" @saved="handleUserSaved" @cancel="showCreateModal = false" />
       </div>
     </UModal>
 
@@ -128,7 +100,10 @@ const userToDelete = ref<any>(null)
 const roleOptions = [
   { label: t('admin.users.allRoles'), value: '' },
   { label: t('auth.admin'), value: 'admin' },
-  { label: t('auth.employee'), value: 'employee' },
+  { label: t('admin.users.roles.responsable'), value: 'responsable' },
+  { label: t('admin.users.roles.gestionnaire'), value: 'gestionnaire' },
+  { label: t('admin.users.roles.team_leader'), value: 'team_leader' },
+  { label: t('admin.users.roles.ouvrier'), value: 'ouvrier' },
 ]
 
 const columns = [
@@ -155,14 +130,12 @@ const loadUsers = async () => {
     if (searchQuery.value) params.search = searchQuery.value
     if (roleFilter.value) params.role = roleFilter.value
 
-    const response = await $fetch(`${config.public.apiUrl}/admin/users`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
+    const { apiFetch } = useApi()
+    const response = await apiFetch<any>('/admin/users', {
       params,
     })
 
-    users.value = response.data
+    users.value = response.data || response
   } catch (error) {
     console.error('Error loading users:', error)
   } finally {
@@ -188,11 +161,9 @@ const deleteUser = async () => {
   if (!userToDelete.value) return
 
   try {
-    await $fetch(`${config.public.apiUrl}/admin/users/${userToDelete.value.id}`, {
+    const { apiFetch } = useApi()
+    await apiFetch(`/admin/users/${userToDelete.value.id}`, {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
     })
 
     showDeleteModal.value = false
@@ -213,6 +184,7 @@ const getRoleColor = (role: string) => {
   switch (role) {
     case 'admin': return 'blue'
     case 'responsable': return 'purple'
+    case 'gestionnaire': return 'indigo'
     case 'team_leader': return 'orange'
     case 'ouvrier': return 'green'
     default: return 'gray'

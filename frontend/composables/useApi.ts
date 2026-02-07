@@ -25,9 +25,12 @@ export const useApi = () => {
       return response
     } catch (error: any) {
       // Handle 401 Unauthorized
-      if (error.statusCode === 401 || error.status === 401) {
+      if ((error.statusCode === 401 || error.status === 401) && process.client) {
         authStore.logout()
-        await navigateTo('/login')
+        const route = useRoute()
+        if (route.path !== '/login' && route.path !== '/') {
+          await navigateTo('/login')
+        }
       }
 
       throw error

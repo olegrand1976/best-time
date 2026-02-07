@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout :name="isAdmin ? 'admin' : 'default'">
+  <NuxtLayout :name="dashboardLayout">
     <div>
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">{{ $t('dashboard.title') }}</h1>
@@ -58,7 +58,10 @@
 </template>
 
 <script setup lang="ts">
-const { isAdmin } = useAuth()
+import type { LayoutKey } from '#build/types/layouts'
+
+const { isAdmin, isManager } = useAuth()
+const dashboardLayout = computed(() => isManager.value ? 'admin' : 'default')
 
 definePageMeta({
   middleware: 'auth',
@@ -78,7 +81,7 @@ const loadDashboard = async () => {
     const config = useRuntimeConfig()
     const authStore = useAuthStore()
 
-    const response = await $fetch(`${config.public.apiUrl}/dashboard`, {
+    const response = await $fetch<any>(`${config.public.apiUrl}/dashboard`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`,
       },

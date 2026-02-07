@@ -16,11 +16,7 @@
     </UFormGroup>
 
     <UFormGroup :label="$t('admin.users.role')" name="role" required>
-      <USelect
-        v-model="form.role"
-        :options="roleOptions"
-        required
-      />
+      <USelect v-model="form.role" :options="roleOptions" required />
     </UFormGroup>
 
     <UAlert v-if="error" color="red" variant="soft" :title="error" />
@@ -62,7 +58,10 @@ const form = ref({
 
 const roleOptions = [
   { label: t('auth.admin'), value: 'admin' },
-  { label: t('auth.employee'), value: 'employee' },
+  { label: t('admin.users.roles.responsable'), value: 'responsable' },
+  { label: t('admin.users.roles.gestionnaire'), value: 'gestionnaire' },
+  { label: t('admin.users.roles.team_leader'), value: 'team_leader' },
+  { label: t('admin.users.roles.ouvrier'), value: 'ouvrier' },
 ]
 
 const handleSubmit = async () => {
@@ -85,11 +84,9 @@ const handleSubmit = async () => {
       body.password = form.value.password
     }
 
-    await $fetch(url, {
+    const { apiFetch } = useApi()
+    await apiFetch(url, {
       method,
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
       body,
     })
 

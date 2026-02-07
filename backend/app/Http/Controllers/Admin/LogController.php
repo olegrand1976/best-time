@@ -16,23 +16,17 @@ use Illuminate\Support\Facades\Log;
 class LogController extends Controller
 {
     /**
-     * Create a new controller instance.
-     */
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!$request->user() || !$request->user()->isAdmin()) {
-                return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
-            }
-            return $next($request);
-        });
-    }
-
-    /**
      * Get application logs (laravel.log).
+     * Access: Admin only
      */
     public function getApplicationLogs(Request $request): JsonResponse
     {
+        // Authorization: Admin only for technical logs
+        $user = $request->user();
+        if (!$user || !$user->isAdmin()) {
+            return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
+        }
+
         $lines = (int) $request->input('lines', 500); // Par défaut 500 lignes
         $level = $request->input('level'); // 'error', 'warning', 'info', etc.
 
@@ -76,9 +70,16 @@ class LogController extends Controller
 
     /**
      * Get activity logs (audit trail).
+     * Access: Admin + Responsable only
      */
     public function getActivityLogs(Request $request): AnonymousResourceCollection
     {
+        // Authorization: Admin + Responsable only for activity logs
+        $user = $request->user();
+        if (!$user || (!$user->isAdmin() && $user->role !== 'responsable')) {
+            abort(403, 'Unauthorized. Admin or Responsable access required.');
+        }
+
         $query = ActivityLog::with('user')
             ->orderBy('created_at', 'desc');
 
@@ -125,9 +126,16 @@ class LogController extends Controller
 
     /**
      * Get statistics about logs.
+     * Access: Admin + Responsable only
      */
     public function getLogStatistics(Request $request): JsonResponse
     {
+        // Authorization: Admin + Responsable only
+        $user = $request->user();
+        if (!$user || (!$user->isAdmin() && $user->role !== 'responsable')) {
+            return response()->json(['message' => 'Unauthorized. Admin or Responsable access required.'], 403);
+        }
+
         $startDate = $request->input('start_date', now()->subDays(30)->format('Y-m-d'));
         $endDate = $request->input('end_date', now()->format('Y-m-d'));
 
@@ -164,9 +172,16 @@ class LogController extends Controller
 
     /**
      * Clear application logs (truncate laravel.log).
+     * Access: Admin only
      */
-    public function clearApplicationLogs(): JsonResponse
+    public function clearApplicationLogs(Request $request): JsonResponse
     {
+        // Authorization: Admin only for technical logs
+        $user = $request->user();
+        if (!$user || !$user->isAdmin()) {
+            return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
+        }
+
         $logPath = storage_path('logs/laravel.log');
 
         if (File::exists($logPath)) {

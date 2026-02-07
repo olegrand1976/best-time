@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         // We use CASCADE to handle foreign key constraints in PostgreSQL
         DB::statement('TRUNCATE TABLE time_entries CASCADE');
         DB::statement('TRUNCATE TABLE projects CASCADE');
+        DB::statement('TRUNCATE TABLE clients CASCADE');
         DB::statement('TRUNCATE TABLE users CASCADE');
         DB::statement('TRUNCATE TABLE organizations CASCADE');
 
@@ -133,6 +134,31 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
+        // Create gestionnaires
+        $gest1 = User::create([
+            'name' => 'Claire Fontaine',
+            'email' => 'claire.fontaine@construction-abc.be',
+            'password' => Hash::make('password'),
+            'role' => 'gestionnaire',
+            'organization_id' => $org1->id,
+            'phone' => '+32 2 123 45 74',
+            'employee_number' => 'GEST-001',
+            'hire_date' => now()->subYears(4),
+            'is_active' => true,
+        ]);
+
+        $gest2 = User::create([
+            'name' => 'Paul Mercier',
+            'email' => 'paul.mercier@services-xyz.be',
+            'password' => Hash::make('password'),
+            'role' => 'gestionnaire',
+            'organization_id' => $org2->id,
+            'phone' => '+32 3 987 65 48',
+            'employee_number' => 'GEST-002',
+            'hire_date' => now()->subYears(2),
+            'is_active' => true,
+        ]);
+
         // Create ouvriers for org1
         $ouvrier1 = User::create([
             'name' => 'Lucas Bernard',
@@ -237,10 +263,56 @@ class DatabaseSeeder extends Seeder
         // teamLeader2 can encode for ouvrier4
         $teamLeader2->teamOuvriers()->attach([$ouvrier4->id]);
 
-        // Create projects with GPS coordinates and QR codes
+        // Create clients
+        $client1 = \App\Models\Client::create([
+            'name' => 'Promoteur Immobilier ABC',
+            'contact_person' => 'Jacques Durand',
+            'email' => 'contact@promoteur-abc.be',
+            'phone' => '+32 2 555 12 34',
+            'address' => '15 Avenue des Promoteurs, 1000 Bruxelles',
+            'is_active' => true,
+        ]);
+
+        $client2 = \App\Models\Client::create([
+            'name' => 'Syndic Copropriété Centrale',
+            'contact_person' => 'Marie Leblanc',
+            'email' => 'syndic@copro-centrale.be',
+            'phone' => '+32 2 555 56 78',
+            'address' => '42 Rue des Copropriétaires, 1050 Bruxelles',
+            'is_active' => true,
+        ]);
+
+        $client3 = \App\Models\Client::create([
+            'name' => 'Industrie Métallurgique SA',
+            'contact_person' => 'Pierre Acier',
+            'email' => 'contact@metallurgie-sa.be',
+            'phone' => '+32 3 555 90 12',
+            'address' => '78 Zone Industrielle, 2000 Anvers',
+            'is_active' => true,
+        ]);
+
+        $client4 = \App\Models\Client::create([
+            'name' => 'Bureau d\'Architecture Moderne',
+            'contact_person' => 'Sophie Architecte',
+            'email' => 'info@archi-moderne.be',
+            'phone' => '+32 9 555 34 56',
+            'address' => '23 Boulevard Design, 9000 Gand',
+            'is_active' => true,
+        ]);
+
+        $client5 = \App\Models\Client::create([
+            'name' => 'Ville de Bruxelles',
+            'contact_person' => 'Jean Municipal',
+            'email' => 'travaux@ville-bruxelles.be',
+            'phone' => '+32 2 555 78 90',
+            'address' => 'Grand-Place 1, 1000 Bruxelles',
+            'is_active' => true,
+        ]);
+
+        // Create projects with GPS coordinates, QR codes, and client links
         $project1 = Project::create([
             'name' => 'Construction Immeuble Résidentiel',
-            'client' => 'Promoteur Immobilier ABC',
+            'client_id' => $client1->id,
             'status' => 'active',
             'latitude' => 50.8503,
             'longitude' => 4.3517,
@@ -250,7 +322,7 @@ class DatabaseSeeder extends Seeder
 
         $project2 = Project::create([
             'name' => 'Rénovation Façade',
-            'client' => 'Syndic Copropriété',
+            'client_id' => $client2->id,
             'status' => 'active',
             'latitude' => 50.8467,
             'longitude' => 4.3525,
@@ -260,7 +332,7 @@ class DatabaseSeeder extends Seeder
 
         $project3 = Project::create([
             'name' => 'Maintenance Machines Production',
-            'client' => 'Industrie Métallurgique',
+            'client_id' => $client3->id,
             'status' => 'active',
             'latitude' => 51.2194,
             'longitude' => 4.4025,
@@ -270,12 +342,22 @@ class DatabaseSeeder extends Seeder
 
         $project4 = Project::create([
             'name' => 'Installation Système Électrique',
-            'client' => 'Bureau d\'Architecture',
+            'client_id' => $client4->id,
             'status' => 'active',
             'latitude' => 51.0543,
             'longitude' => 3.7174,
             'geofence_radius' => 75,
             'qr_code_token' => hash('sha256', 'project4-' . now()->timestamp),
+        ]);
+
+        $project5 = Project::create([
+            'name' => 'Rénovation Voirie Municipale',
+            'client_id' => $client5->id,
+            'status' => 'active',
+            'latitude' => 50.8467,
+            'longitude' => 4.3525,
+            'geofence_radius' => 150,
+            'qr_code_token' => hash('sha256', 'project5-' . now()->timestamp),
         ]);
 
         // Create time entries for ouvrier1 (encoded by himself)
@@ -494,13 +576,15 @@ class DatabaseSeeder extends Seeder
         $this->command->info('');
         $this->command->info('📊 Created:');
         $this->command->info('   - 3 Organizations (with geolocation settings)');
-        $this->command->info('   - 12 Users (2 admins, 3 responsables, 2 team leaders, 5 ouvriers)');
-        $this->command->info('   - 4 Projects (with GPS coordinates and QR codes)');
+        $this->command->info('   - 14 Users (2 admins, 3 responsables, 2 gestionnaires, 2 team leaders, 5 ouvriers)');
+        $this->command->info('   - 5 Clients');
+        $this->command->info('   - 5 Projects (with GPS coordinates, QR codes, and client links)');
         $this->command->info('   - ' . TimeEntry::count() . ' Time Entries (including geolocation and QR scans)');
         $this->command->info('');
         $this->command->info('🔐 Test credentials:');
         $this->command->info('   Admin: admin@besttime.test / password');
         $this->command->info('   Responsable: pierre.dubois@construction-abc.be / password');
+        $this->command->info('   Gestionnaire: claire.fontaine@construction-abc.be / password');
         $this->command->info('   Team Leader: marc.leroy@construction-abc.be / password');
         $this->command->info('   Ouvrier: lucas.bernard@construction-abc.be / password');
         $this->command->info('');

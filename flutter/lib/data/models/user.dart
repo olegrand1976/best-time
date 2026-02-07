@@ -39,6 +39,10 @@ class User {
 
   bool get isAdmin => role == 'admin';
   bool get isResponsable => role == 'responsable';
+  bool get isGestionnaire => role == 'gestionnaire';
   bool get isTeamLeader => role == 'team_leader';
   bool get isOuvrier => role == 'ouvrier';
+  
+  // Manager includes both responsable and gestionnaire
+  bool get isManager => isResponsable || isGestionnaire;
 }
