@@ -57,7 +57,7 @@
     <UModal v-model="showCreateModal"
       :title="editingUser ? $t('admin.users.editTitle') : $t('admin.users.createTitle')">
       <div v-if="showCreateModal">
-        <UserForm :user="editingUser" @saved="handleUserSaved" @cancel="showCreateModal = false" />
+        <AdminUserForm :user="editingUser" @saved="handleUserSaved" @cancel="showCreateModal = false" />
       </div>
     </UModal>
 
