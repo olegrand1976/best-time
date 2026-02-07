@@ -37,8 +37,13 @@
                     </template>
 
                     <template #actions-data="{ row }">
-                        <UButton icon="i-heroicons-trash" color="red" variant="ghost" size="sm"
-                            @click="confirmRemove(row)" />
+                        <div class="flex items-center space-x-2">
+                            <UButton :icon="row.is_active ? 'i-heroicons-pause-circle' : 'i-heroicons-play-circle'"
+                                :color="row.is_active ? 'amber' : 'green'" variant="ghost" size="sm"
+                                :title="row.is_active ? 'Désactiver' : 'Activer'" @click="toggleActive(row)" />
+                            <UButton icon="i-heroicons-trash" color="red" variant="ghost" size="sm"
+                                title="Retirer de l'équipe" @click="confirmRemove(row)" />
+                        </div>
                     </template>
                 </UTable>
             </div>
@@ -231,6 +236,28 @@ const removeMember = async () => {
         })
     } finally {
         removing.value = false
+    }
+}
+
+const toggleActive = async (member: TeamMember) => {
+    try {
+        const response = await $fetch(`${config.public.apiUrl}/team/${member.id}/toggle-active`, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${authStore.token}` }
+        }) as any
+        toast.add({
+            title: response.message,
+            icon: response.is_active ? 'i-heroicons-check-circle' : 'i-heroicons-pause-circle',
+            color: response.is_active ? 'green' : 'amber'
+        })
+        loadTeam()
+    } catch (error: any) {
+        toast.add({
+            title: 'Erreur',
+            description: error?.data?.message || 'Impossible de changer le statut',
+            icon: 'i-heroicons-x-circle',
+            color: 'red'
+        })
     }
 }
 

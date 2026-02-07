@@ -102,4 +102,29 @@ class TeamController extends Controller
             'message' => 'Gestionnaire removed from team',
         ]);
     }
+
+    /**
+     * Toggle a gestionnaire's active status.
+     */
+    public function toggleActive(Request $request, User $user): JsonResponse
+    {
+        $currentUser = $request->user();
+
+        if (!$currentUser->isResponsable() && !$currentUser->isAdmin()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Verify the user is in current user's team (unless admin)
+        if (!$currentUser->isAdmin() && !$currentUser->managedGestionnaires()->where('users.id', $user->id)->exists()) {
+            return response()->json(['message' => 'User not in your team'], 403);
+        }
+
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        return response()->json([
+            'message' => $user->is_active ? 'Utilisateur activé' : 'Utilisateur désactivé',
+            'is_active' => $user->is_active,
+        ]);
+    }
 }

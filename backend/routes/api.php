@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/available', [\App\Http\Controllers\TeamController::class, 'available']);
         Route::post('/{user}', [\App\Http\Controllers\TeamController::class, 'attach']);
         Route::delete('/{user}', [\App\Http\Controllers\TeamController::class, 'detach']);
+        Route::patch('/{user}/toggle-active', [\App\Http\Controllers\TeamController::class, 'toggleActive']);
     });
 
     // Admin routes
