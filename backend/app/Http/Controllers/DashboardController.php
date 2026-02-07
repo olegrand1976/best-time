@@ -24,6 +24,10 @@ class DashboardController extends Controller
             return $this->adminDashboard();
         }
 
+        if ($user->isResponsable()) {
+            return $this->responsableDashboard($user);
+        }
+
         return $this->employeeDashboard($user);
     }
 
@@ -91,6 +95,87 @@ class DashboardController extends Controller
             'active_entries' => TimeEntryResource::collection($activeEntries),
             'recent_activity' => TimeEntryResource::collection($recentActivity),
             'project_stats_today' => $projectStats,
+        ]);
+    }
+
+    /**
+     * Responsable dashboard data - team overview and own clocking.
+     */
+    private function responsableDashboard(User $user): JsonResponse
+    {
+        // Get team member IDs (gestionnaires managed by this responsable)
+        $teamIds = $user->managedGestionnaires()->pluck('users.id')->toArray();
+        
+        // Include the responsable themselves
+        $allUserIds = array_merge($teamIds, [$user->id]);
+
+        // Projects (all active projects)
+        $projects = \App\Http\Resources\ProjectResource::collection(
+            \App\Models\Project::active()->orderBy('name')->get()
+        );
+
+        // Current active entry for the responsable
+        $activeEntry = TimeEntry::with(['project'])
+            ->where('user_id', $user->id)
+            ->whereNull('end_time')
+            ->first();
+
+        // Team active entries (gestionnaires currently working)
+        $teamActiveEntries = TimeEntry::with(['user', 'project'])
+            ->whereIn('user_id', $teamIds)
+            ->whereNull('end_time')
+            ->get();
+
+        // Team statistics today
+        $teamStatsToday = User::whereIn('id', $teamIds)
+            ->with(['timeEntries' => function ($query) {
+                $query->today()->whereNotNull('end_time');
+            }])
+            ->get()
+            ->map(function ($member) {
+                $totalSeconds = $member->timeEntries->sum('duration');
+                return [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                    'is_active' => $member->is_active,
+                    'hours_today' => round($totalSeconds / 3600, 2),
+                ];
+            });
+
+        // Responsable own stats
+        $todayEntries = TimeEntry::where('user_id', $user->id)
+            ->today()
+            ->whereNotNull('end_time')
+            ->select(DB::raw('SUM(duration) as total_seconds'))
+            ->first();
+        $todayHours = $todayEntries->total_seconds ? round($todayEntries->total_seconds / 3600, 2) : 0;
+
+        $weekEntries = TimeEntry::where('user_id', $user->id)
+            ->thisWeek()
+            ->whereNotNull('end_time')
+            ->select(DB::raw('SUM(duration) as total_seconds'))
+            ->first();
+        $weekHours = $weekEntries->total_seconds ? round($weekEntries->total_seconds / 3600, 2) : 0;
+
+        // Team total hours today
+        $teamTodayTotal = TimeEntry::whereIn('user_id', $teamIds)
+            ->today()
+            ->whereNotNull('end_time')
+            ->select(DB::raw('SUM(duration) as total_seconds'))
+            ->first();
+        $teamTodayHours = $teamTodayTotal->total_seconds ? round($teamTodayTotal->total_seconds / 3600, 2) : 0;
+
+        return response()->json([
+            'role' => 'responsable',
+            'projects' => $projects,
+            'active_entry' => $activeEntry ? new TimeEntryResource($activeEntry) : null,
+            'today_hours' => $todayHours,
+            'week_hours' => $weekHours,
+            'team_active_entries' => TimeEntryResource::collection($teamActiveEntries),
+            'team_stats' => $teamStatsToday,
+            'team_today_hours' => $teamTodayHours,
+            'team_count' => count($teamIds),
         ]);
     }
 
