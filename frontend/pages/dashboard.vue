@@ -108,6 +108,43 @@
               Aucun membre dans votre équipe
             </div>
           </UCard>
+
+          <!-- Project Statistics -->
+          <UCard>
+            <template #header>
+              <h3 class="text-lg font-semibold">Pointages par projet aujourd'hui</h3>
+            </template>
+            <div v-if="stats.project_stats?.length" class="space-y-4">
+              <div v-for="project in stats.project_stats" :key="project.project_id" class="border rounded-lg p-4">
+                <div class="flex justify-between items-center mb-3">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <UIcon name="i-heroicons-building-office" class="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p class="font-semibold text-gray-900">{{ project.project_name }}</p>
+                      <p class="text-sm text-gray-500">{{ project.users?.length || 0 }} intervenant(s)</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xl font-bold text-blue-600">{{ project.total_hours }}h</p>
+                    <p class="text-sm text-gray-500">total</p>
+                  </div>
+                </div>
+                <div v-if="project.users?.length" class="flex flex-wrap gap-2">
+                  <div v-for="user in project.users" :key="user.id"
+                    class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
+                    <span class="text-sm font-medium text-gray-700">{{ user.name }}</span>
+                    <span class="text-xs text-gray-500">({{ user.hours }}h)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center py-8 text-gray-500">
+              <UIcon name="i-heroicons-briefcase" class="w-8 h-8 mx-auto mb-2 text-gray-300" />
+              <p>Aucun pointage projet aujourd'hui</p>
+            </div>
+          </UCard>
         </div>
 
         <!-- Employee Dashboard -->

@@ -166,6 +166,33 @@ class DashboardController extends Controller
             ->first();
         $teamTodayHours = $teamTodayTotal->total_seconds ? round($teamTodayTotal->total_seconds / 3600, 2) : 0;
 
+        // Project stats today (hours per project with users who worked on it)
+        $projectStats = TimeEntry::whereIn('user_id', $allUserIds)
+            ->today()
+            ->whereNotNull('project_id')
+            ->with(['project', 'user'])
+            ->get()
+            ->groupBy('project_id')
+            ->map(function ($entries) {
+                $project = $entries->first()->project;
+                $totalSeconds = $entries->sum('duration');
+                $users = $entries->groupBy('user_id')->map(function ($userEntries) {
+                    $user = $userEntries->first()->user;
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'hours' => round($userEntries->sum('duration') / 3600, 2),
+                    ];
+                })->values();
+
+                return [
+                    'project_id' => $project?->id,
+                    'project_name' => $project?->name ?? 'Sans projet',
+                    'total_hours' => round($totalSeconds / 3600, 2),
+                    'users' => $users,
+                ];
+            })->values();
+
         return response()->json([
             'role' => 'responsable',
             'projects' => $projects,
@@ -176,6 +203,7 @@ class DashboardController extends Controller
             'team_stats' => $teamStatsToday,
             'team_today_hours' => $teamTodayHours,
             'team_count' => count($teamIds),
+            'project_stats' => $projectStats,
         ]);
     }
 
