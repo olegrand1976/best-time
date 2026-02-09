@@ -19,7 +19,7 @@ class ProjectResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'client' => $this->client,
+            'client' => $this->relationLoaded('client') ? $this->client?->name : null,
             'client_id' => $this->client_id,
             'status' => $this->status,
             'latitude' => $this->latitude,

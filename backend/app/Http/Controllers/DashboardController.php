@@ -25,7 +25,7 @@ class DashboardController extends Controller
         }
 
         if ($user->isResponsable()) {
-            return $this->responsableDashboard($user);
+            return $this->responsableDashboard($user, $request);
         }
 
         return $this->employeeDashboard($user);
@@ -101,8 +101,46 @@ class DashboardController extends Controller
     /**
      * Responsable dashboard data - team overview and own clocking.
      */
-    private function responsableDashboard(User $user): JsonResponse
+    private function responsableDashboard(User $user, Request $request): JsonResponse
     {
+        $period = $request->input('period', 'week'); // Default to week
+        $now = now();
+
+        switch ($period) {
+            case 'today':
+                $startDate = $now->copy()->startOfDay();
+                $endDate = $now->copy()->endOfDay();
+                $trendGranularity = 'day';
+                break;
+            case 'month':
+                $startDate = $now->copy()->startOfMonth();
+                $endDate = $now->copy()->endOfMonth();
+                $trendGranularity = 'day';
+                break;
+            case 'quarter':
+                $startDate = $now->copy()->startOfQuarter();
+                $endDate = $now->copy()->endOfQuarter();
+                $trendGranularity = 'month';
+                break;
+            case 'semester':
+                // First or second half of year
+                $startDate = $now->month <= 6 ? $now->copy()->startOfYear() : $now->copy()->startOfYear()->addMonths(6);
+                $endDate = $now->month <= 6 ? $now->copy()->startOfYear()->addMonths(5)->endOfMonth() : $now->copy()->endOfYear();
+                $trendGranularity = 'month';
+                break;
+            case 'year':
+                $startDate = $now->copy()->startOfYear();
+                $endDate = $now->copy()->endOfYear();
+                $trendGranularity = 'month';
+                break;
+            case 'week':
+            default:
+                $startDate = $now->copy()->startOfWeek();
+                $endDate = $now->copy()->endOfWeek();
+                $trendGranularity = 'day';
+                break;
+        }
+
         // Get team member IDs (gestionnaires managed by this responsable)
         $teamIds = $user->managedGestionnaires()->pluck('users.id')->toArray();
         
@@ -114,22 +152,30 @@ class DashboardController extends Controller
             \App\Models\Project::active()->orderBy('name')->get()
         );
 
-        // Current active entry for the responsable
+        // Current active entry for the responsable (Always Real-time)
         $activeEntry = TimeEntry::with(['project'])
             ->where('user_id', $user->id)
             ->whereNull('end_time')
             ->first();
 
-        // Team active entries (gestionnaires currently working)
+        // Team active entries (Always Real-time)
         $teamActiveEntries = TimeEntry::with(['user', 'project'])
             ->whereIn('user_id', $teamIds)
             ->whereNull('end_time')
             ->get();
 
-        // Team statistics today
-        $teamStatsToday = User::whereIn('id', $teamIds)
-            ->with(['timeEntries' => function ($query) {
-                $query->today()->whereNotNull('end_time');
+        // Stats Logic Helper
+        $getDurationSum = function ($query) use ($startDate, $endDate) {
+            return $query->whereBetween('start_time', [$startDate, $endDate])
+                ->whereNotNull('end_time')
+                ->sum('duration');
+        };
+
+        // Team statistics for period
+        $teamStats = User::whereIn('id', $teamIds)
+            ->with(['timeEntries' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('start_time', [$startDate, $endDate])
+                    ->whereNotNull('end_time');
             }])
             ->get()
             ->map(function ($member) {
@@ -139,36 +185,27 @@ class DashboardController extends Controller
                     'name' => $member->name,
                     'email' => $member->email,
                     'is_active' => $member->is_active,
-                    'hours_today' => round($totalSeconds / 3600, 2),
+                    'hours_period' => round($totalSeconds / 3600, 2),
                 ];
             });
 
-        // Responsable own stats
-        $todayEntries = TimeEntry::where('user_id', $user->id)
-            ->today()
+        // Responsable own stats for period
+        $ownSeconds = TimeEntry::where('user_id', $user->id)
+            ->whereBetween('start_time', [$startDate, $endDate])
             ->whereNotNull('end_time')
-            ->select(DB::raw('SUM(duration) as total_seconds'))
-            ->first();
-        $todayHours = $todayEntries->total_seconds ? round($todayEntries->total_seconds / 3600, 2) : 0;
+            ->sum('duration');
+        $ownHours = round($ownSeconds / 3600, 2);
 
-        $weekEntries = TimeEntry::where('user_id', $user->id)
-            ->thisWeek()
+        // Team total hours for period
+        $teamTotalSeconds = TimeEntry::whereIn('user_id', $teamIds)
+             ->whereBetween('start_time', [$startDate, $endDate])
             ->whereNotNull('end_time')
-            ->select(DB::raw('SUM(duration) as total_seconds'))
-            ->first();
-        $weekHours = $weekEntries->total_seconds ? round($weekEntries->total_seconds / 3600, 2) : 0;
+            ->sum('duration');
+        $teamPeriodHours = round($teamTotalSeconds / 3600, 2);
 
-        // Team total hours today
-        $teamTodayTotal = TimeEntry::whereIn('user_id', $teamIds)
-            ->today()
-            ->whereNotNull('end_time')
-            ->select(DB::raw('SUM(duration) as total_seconds'))
-            ->first();
-        $teamTodayHours = $teamTodayTotal->total_seconds ? round($teamTodayTotal->total_seconds / 3600, 2) : 0;
-
-        // Project stats today (hours per project with users who worked on it)
+        // Project stats for period
         $projectStats = TimeEntry::whereIn('user_id', $allUserIds)
-            ->today()
+            ->whereBetween('start_time', [$startDate, $endDate])
             ->whereNotNull('project_id')
             ->with(['project', 'user'])
             ->get()
@@ -193,44 +230,43 @@ class DashboardController extends Controller
                 ];
             })->values();
 
-        // Daily trend for the last 7 days (Team)
-        $dailyTrend = collect();
-        for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $dailyTrend->put($date, 0);
-        }
-
+        // Trend logic
         $trendEntries = TimeEntry::whereIn('user_id', $teamIds)
-            ->whereBetween('start_time', [now()->subDays(6)->startOfDay(), now()->endOfDay()])
-            ->whereNotNull('end_time')
-            ->select(DB::raw('DATE(start_time) as date'), DB::raw('SUM(duration) as total_seconds'))
-            ->groupBy('date')
-            ->get();
-
-        $trendEntries->each(function ($entry) use ($dailyTrend) {
-            $dailyTrend->put($entry->date, round($entry->total_seconds / 3600, 2));
-        });
-
-        $formattedTrend = $dailyTrend->map(function ($hours, $date) {
-            return [
-                'date' => $date,
-                'hours' => $hours,
-                'label' => \Carbon\Carbon::parse($date)->isoFormat('dd D'),
-            ];
-        })->values();
+            ->whereBetween('start_time', [$startDate, $endDate])
+            ->whereNotNull('end_time');
+        
+        if ($trendGranularity === 'day') {
+            $trendData = $trendEntries->select(DB::raw('start_time::date as date'), DB::raw('SUM(duration) as total_seconds'))
+                ->groupBy(DB::raw('start_time::date'))
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->date)->isoFormat('dd D'),
+                    'hours' => round($item->total_seconds / 3600, 2)
+                ]);
+        } else {
+             $trendData = $trendEntries->select(DB::raw("TO_CHAR(start_time, 'YYYY-MM') as month"), DB::raw('SUM(duration) as total_seconds'))
+                ->groupBy(DB::raw("TO_CHAR(start_time, 'YYYY-MM')"))
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->month . '-01')->isoFormat('MMMM YYYY'),
+                    'hours' => round($item->total_seconds / 3600, 2)
+                ]);
+        }
 
         return response()->json([
             'role' => 'responsable',
+            'period' => $period,
+            'start_date' => $startDate->toDateString(),
+            'end_date' => $endDate->toDateString(),
             'projects' => $projects,
             'active_entry' => $activeEntry ? new TimeEntryResource($activeEntry) : null,
-            'today_hours' => $todayHours,
-            'week_hours' => $weekHours,
+            'my_period_hours' => $ownHours,
             'team_active_entries' => TimeEntryResource::collection($teamActiveEntries),
-            'team_stats' => $teamStatsToday,
-            'team_today_hours' => $teamTodayHours,
+            'team_stats' => $teamStats,
+            'team_period_hours' => $teamPeriodHours,
             'team_count' => count($teamIds),
             'project_stats' => $projectStats,
-            'daily_trend' => $formattedTrend,
+            'period_trend' => $trendData,
         ]);
     }
 

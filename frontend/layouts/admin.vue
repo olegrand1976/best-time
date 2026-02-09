@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isDeviceAllowed" class="min-h-screen">
-    <DeviceRestrictionMessage :message="restrictionMessage" :required-device="requiredDevice" />
+    <DeviceRestrictionMessage :message="restrictionMessage" :required-device="requiredDevice || 'desktop'" />
   </div>
   <div v-else class="min-h-screen bg-gray-50 flex flex-col w-full">
     <ClientOnly>
@@ -8,7 +8,7 @@
     </ClientOnly>
 
     <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
         <div class="flex justify-between h-16">
           <div class="flex items-center space-x-8">
             <NuxtLink to="/dashboard" class="flex items-center space-x-2">
@@ -39,11 +39,6 @@
                 class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
                 :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/clients') }">
                 {{ $t('admin.nav.clients') }}
-              </NuxtLink>
-              <NuxtLink to="/admin/statistics"
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/statistics') }">
-                {{ $t('admin.nav.statistics') }}
               </NuxtLink>
 
               <!-- Team (Responsable only) -->
@@ -124,12 +119,6 @@
             :class="{ 'bg-blue-50 text-blue-600': $route.path.startsWith('/admin/clients') }"
             @click="isMenuOpen = false">
             {{ $t('admin.nav.clients') }}
-          </NuxtLink>
-          <NuxtLink to="/admin/statistics"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
-            :class="{ 'bg-blue-50 text-blue-600': $route.path.startsWith('/admin/statistics') }"
-            @click="isMenuOpen = false">
-            {{ $t('admin.nav.statistics') }}
           </NuxtLink>
 
           <template v-if="isAdmin">

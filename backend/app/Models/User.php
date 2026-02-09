@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,11 +25,18 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'role',
         'organization_id',
         'phone',
+        'address',
+        'box',
+        'zip_code',
+        'city',
+        'project_id',
         'employee_number',
         'hire_date',
         'is_active',
@@ -57,6 +66,15 @@ class User extends Authenticatable
             'is_active' => 'boolean',
         ];
     }
+    /**
+     * Get the user's full name.
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? '')) ?: $value,
+        );
+    }
 
     /**
      * Get the organization that the user belongs to.
@@ -64,6 +82,14 @@ class User extends Authenticatable
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    /**
+     * Get the project that the user is assigned to.
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 
     /**

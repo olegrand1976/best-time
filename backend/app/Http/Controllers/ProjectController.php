@@ -20,7 +20,8 @@ class ProjectController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        $projects = Project::active()
+        $projects = Project::with('client')
+            ->active()
             ->orderBy('name')
             ->get();
 

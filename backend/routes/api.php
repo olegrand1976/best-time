@@ -59,8 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{user}/toggle-active', [\App\Http\Controllers\TeamController::class, 'toggleActive']);
     });
 
-    // Admin routes
-    Route::middleware(\App\Http\Middleware\EnsureUserIsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
+    // Admin or Responsable routes (User Management)
+    Route::middleware(\App\Http\Middleware\EnsureUserIsAdminOrResponsable::class)->prefix('admin')->name('admin.')->group(function () {
         // Users management
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
@@ -68,7 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update']);
         Route::delete('/users/{user}', [UserController::class, 'destroy']);
         Route::get('/users/{user}/statistics', [UserController::class, 'statistics']);
+    });
 
+    // Admin routes
+    Route::middleware(\App\Http\Middleware\EnsureUserIsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
         // Statistics
         Route::get('/statistics', [StatisticsController::class, 'index']);
 

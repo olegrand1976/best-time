@@ -14,6 +14,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeEmail;
 
 class UserController extends Controller
 {
@@ -49,11 +51,27 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): JsonResponse
     {
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role ?? 'ouvrier',
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'box' => $request->box,
+            'zip_code' => $request->zip_code,
+            'city' => $request->city,
+            'project_id' => $request->project_id,
         ]);
+        
+        if ($user->email) {
+            try {
+                Mail::to($user)->send(new WelcomeEmail($user, $request->password));
+            } catch (\Exception $e) {
+                // Log email error?
+            }
+        }
 
         // Log the creation
         ActivityLogService::logCreated($user, $request);
@@ -79,11 +97,14 @@ class UserController extends Controller
     {
         $oldAttributes = $user->getAttributes();
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ];
+        $data = $request->validated();
+        
+        // Update name if first/last name changed
+        if (isset($data['first_name']) || isset($data['last_name'])) {
+            $firstName = $data['first_name'] ?? $user->first_name;
+            $lastName = $data['last_name'] ?? $user->last_name;
+            $data['name'] = $firstName . ' ' . $lastName;
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
