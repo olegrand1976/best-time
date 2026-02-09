@@ -25,6 +25,14 @@
                 :class="{ 'text-blue-600 font-semibold': $route.path === '/admin' }">
                 {{ $t('admin.nav.dashboard') }}
               </NuxtLink>
+
+              <!-- Team (Responsable only) - Right after Dashboard -->
+              <NuxtLink v-if="isResponsable" to="/admin/team"
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/team') }">
+                {{ $t('admin.nav.team') }}
+              </NuxtLink>
+
               <NuxtLink to="/admin/users"
                 class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
                 :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/users') }">
@@ -39,13 +47,6 @@
                 class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
                 :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/clients') }">
                 {{ $t('admin.nav.clients') }}
-              </NuxtLink>
-
-              <!-- Team (Responsable only) -->
-              <NuxtLink v-if="isResponsable" to="/admin/team"
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/team') }">
-                {{ $t('admin.nav.team') }}
               </NuxtLink>
 
               <!-- Logs (Admin only) -->
