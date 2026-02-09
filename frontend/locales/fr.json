@@ -164,7 +164,8 @@
   "admin": {
     "nav": {
       "dashboard": "Tableau de bord",
-      "users": "Utilisateurs",
+      "users": "Personnel",
+      "team": "Mon équipe RH",
       "projects": "Projets",
       "clients": "Clients",
       "statistics": "Statistiques",

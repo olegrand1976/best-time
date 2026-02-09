@@ -164,8 +164,10 @@
   "admin": {
     "nav": {
       "dashboard": "Dashboard",
-      "users": "Users",
+      "users": "Staff",
+      "team": "My HR Team",
       "projects": "Projects",
+      "clients": "Clients",
       "statistics": "Statistics",
       "settings": "Settings",
       "logs": "Logs",

@@ -45,7 +45,7 @@
               <NuxtLink v-if="isResponsable" to="/admin/team"
                 class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
                 :class="{ 'text-blue-600 font-semibold': $route.path.startsWith('/admin/team') }">
-                Mon équipe
+                {{ $t('admin.nav.team') }}
               </NuxtLink>
 
               <!-- Logs (Admin only) -->
